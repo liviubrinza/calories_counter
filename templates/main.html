@@ -1,0 +1,21 @@
+{% extends "base.html" %} 
+
+{% block title %}Main Page{% endblock %} 
+
+{% block head %} 
+  {{ super() }} 
+{% endblock %} 
+
+{% block content %}
+
+{% from 'bootstrap4/nav.html' import render_nav_item %}
+
+<h1>Main page</h1>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="navbar-nav mr-auto">
+      {{ render_nav_item('get_products_list', 'Produse') }}
+      {{ render_nav_item('daily_tracker', 'Evidenta zilnica') }}
+  </div>
+</nav>
+
+{% endblock %}

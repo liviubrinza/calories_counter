@@ -1,41 +1,85 @@
-<!DOCTYPE html>
-<head>
-    <title>FlaskApp</title>
-</head>
-    <body>
-        <h1>Produse disponibile</h1>
+{% extends "base.html" %} 
 
-        <table border="1">
-            <th>Index</th>
-            <th>Nume</th>
-            <th>Calorii</th>
-            <th>Proteine</th>
-            <th>Lipide</th>
-            <th>Carbo</th>
-            {% for product in products %}
-            <tr>
-                <td>{{loop.index}}</td>
-                <td>{{product.name}}</td>
-                <td style="text-align: center">{{product.calories}}</td>
-                <td style="text-align: center">{{product.protein}}</td>
-                <td style="text-align: center">{{product.fats}}</td>
-                <td style="text-align: center">{{product.carbs}}</td>
-            </tr>
-            {% endfor %}
+{% block title %}Products{% endblock %} 
+
+{% block head %} 
+  {{ super() }} 
+{% endblock %} 
+
+{% block content %}
+
+<div class="p-5">
+    <h1>Produse disponibile</h1>
+
+    {% from 'bootstrap4/nav.html' import render_nav_item %}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="navbar-nav mr-auto">
+            {{ render_nav_item('main', 'Inapoi') }}
+        </div>
+    </nav>
+
+    <div>
+        <table class="table table-striped w-auto">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Index</th>
+                    <th scope="col">Nume</th>
+                    <th scope="col">Calorii</th>
+                    <th scope="col">Proteine</th>
+                    <th scope="col">Lipide</th>
+                    <th scope="col">Carbo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{product.name}}</td>
+                    <td style="text-align: left">{{product.calories}}</td>
+                    <td style="text-align: left">{{product.protein}}</td>
+                    <td style="text-align: left">{{product.fats}}</td>
+                    <td style="text-align: left">{{product.carbs}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
-        <hr/>
-        <form>
-            <label for="nume">Nume:</label><br>
-            <input type="text" id="nume" name="nume"><br>
-            <label for="calorii">Calorii:</label><br>
-            <input type="text" id="calorii" name="calorii"><br>
-            <label for="proteine">Proteine:</label><br>
-            <input type="text" id="proteine" name="proteine"><br>
-            <label for="lipide">Lipide:</label><br>
-            <input type="text" id="lipide" name="lipide"><br>
-            <label for="carbo">Carbohidrati:</label><br>
-            <input type="text" id="carbo" name="carbo"><br>
-            <input type="submit" value="Adauga">
-        </form>
-    </body>
-</html>
+    </div>
+    <hr/>
+    <h3>Adauga produs nou</h3>
+    <div class="row">
+        <div class="col-sm-4">
+            <form>
+                <div class="form-outline mb-4">
+                    <input type="text" id="nameField" class="form-control" />
+                    <label class="form-label" for="nameField">Nume produs</label>
+                </div>
+                            
+                <div class="form-outline mb-4">
+                    <input type="text" id="calField" class="form-control" />
+                    <label class="form-label" for="calField">Calorii</label>
+                </div>
+              
+                <div class="form-outline mb-4">
+                    <input type="text" id="proteinField" class="form-control" />
+                    <label class="form-label" for="proteinField">Proteine</label>
+                </div>
+    
+                <div class="form-outline mb-4">
+                    <input type="text" id="fatField" class="form-control" />
+                    <label class="form-label" for="fatField">Grasimi</label>
+                </div>
+                
+                <div class="form-outline mb-4">
+                    <input type="text" id="carbField" class="form-control" />
+                    <label class="form-label" for="carbField">Carbohidrati</label>
+                </div>
+              
+                <button type="submit" class="btn btn-primary btn-block">Adauga</button>
+            </form>
+        </div>
+        <div class="col-sm-8"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
