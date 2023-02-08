@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<head>
+    <title>FlaskApp</title>
+</head>
+    <body>
+        <h1>Produse disponibile</h1>
+
+        <table border="1">
+            <th>Index</th>
+            <th>Nume</th>
+            <th>Calorii</th>
+            <th>Proteine</th>
+            <th>Lipide</th>
+            <th>Carbo</th>
+            {% for product in products %}
+            <tr>
+                <td>{{loop.index}}</td>
+                <td>{{product.name}}</td>
+                <td style="text-align: center">{{product.calories}}</td>
+                <td style="text-align: center">{{product.protein}}</td>
+                <td style="text-align: center">{{product.fats}}</td>
+                <td style="text-align: center">{{product.carbs}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <hr/>
+        <form>
+            <label for="nume">Nume:</label><br>
+            <input type="text" id="nume" name="nume"><br>
+            <label for="calorii">Calorii:</label><br>
+            <input type="text" id="calorii" name="calorii"><br>
+            <label for="proteine">Proteine:</label><br>
+            <input type="text" id="proteine" name="proteine"><br>
+            <label for="lipide">Lipide:</label><br>
+            <input type="text" id="lipide" name="lipide"><br>
+            <label for="carbo">Carbohidrati:</label><br>
+            <input type="text" id="carbo" name="carbo"><br>
+            <input type="submit" value="Adauga">
+        </form>
+    </body>
+</html>
