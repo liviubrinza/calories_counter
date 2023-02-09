@@ -3,7 +3,7 @@
 {% block title %}Products{% endblock %} 
 
 {% block head %} 
-  {{ super() }} 
+  {{ super() }}
 {% endblock %} 
 
 {% block content %}
@@ -13,13 +13,14 @@
 
     {% from 'bootstrap4/nav.html' import render_nav_item %}
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="navbar-nav mr-auto">
-            {{ render_nav_item('main', 'Inapoi') }}
-        </div>
-    </nav>
-
-    <div>
+    <div class="mb-4">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="navbar-nav mr-auto">
+                {{ render_nav_item('main', 'Inapoi') }}
+            </div>
+        </nav>
+    </div>
+    <div class="mb-4">
         <table class="table table-striped w-auto">
             <thead class="thead-dark">
                 <tr>
@@ -29,6 +30,7 @@
                     <th scope="col">Proteine</th>
                     <th scope="col">Lipide</th>
                     <th scope="col">Carbo</th>
+                    <th scope="col">Operatii</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,9 +39,17 @@
                     <td>{{loop.index}}</td>
                     <td>{{product.name}}</td>
                     <td style="text-align: left">{{product.calories}}</td>
-                    <td style="text-align: left">{{product.protein}}</td>
-                    <td style="text-align: left">{{product.fats}}</td>
-                    <td style="text-align: left">{{product.carbs}}</td>
+                    <td style="text-align: center">{{product.protein}}</td>
+                    <td style="text-align: center">{{product.fats}}</td>
+                    <td style="text-align: center">{{product.carbs}}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger px-3">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary px-3">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -51,35 +61,24 @@
         <div class="col-sm-4">
             <form>
                 <div class="form-outline mb-4">
-                    <input type="text" id="nameField" class="form-control" />
-                    <label class="form-label" for="nameField">Nume produs</label>
-                </div>
-                            
+                    <input type="text" id="nameField" class="form-control" placeholder="Nume produs" />
+                </div>          
                 <div class="form-outline mb-4">
-                    <input type="text" id="calField" class="form-control" />
-                    <label class="form-label" for="calField">Calorii</label>
+                    <input type="text" id="calField" class="form-control" placeholder="Calorii"/>
                 </div>
-              
                 <div class="form-outline mb-4">
-                    <input type="text" id="proteinField" class="form-control" />
-                    <label class="form-label" for="proteinField">Proteine</label>
+                    <input type="text" id="proteinField" class="form-control" placeholder="Proteine"/>
                 </div>
-    
                 <div class="form-outline mb-4">
-                    <input type="text" id="fatField" class="form-control" />
-                    <label class="form-label" for="fatField">Grasimi</label>
+                    <input type="text" id="fatField" class="form-control" placeholder="Grasimi"/>
                 </div>
-                
                 <div class="form-outline mb-4">
-                    <input type="text" id="carbField" class="form-control" />
-                    <label class="form-label" for="carbField">Carbohidrati</label>
+                    <input type="text" id="carbField" class="form-control" placeholder="Carbohidrati"/>
                 </div>
-              
                 <button type="submit" class="btn btn-primary btn-block">Adauga</button>
             </form>
         </div>
         <div class="col-sm-8"></div>
-        </div>
     </div>
 </div>
 {% endblock %}
