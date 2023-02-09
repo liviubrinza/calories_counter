@@ -1,10 +1,20 @@
 from flask_bootstrap import Bootstrap4
 from flask import Flask, render_template, redirect, url_for, request
 from CsvReader import CsvReader
+from DailyTracker import DailyTracker
 
 app = Flask(__name__)
 
 bootstrap = Bootstrap4(app)
+
+csvReader = CsvReader()
+dailyTracker = DailyTracker(csvReader=csvReader)
+
+
+labels = ['Protein', 'Fats', 'Carbs']
+values = [30, 40, 30]
+colors = ["#1E81B0", "#DCE629", "#D93939"]
+
 
 @app.route("/")
 def main():
@@ -12,15 +22,19 @@ def main():
 
 @app.route('/products')
 def get_products_list():
-    csvReader = CsvReader()
     products = csvReader.get_products_list()
-
     return render_template('products.html', products=products)
 
 @app.route('/daily')
 def daily_tracker():
-    return render_template('daily.html')
 
+    return render_template('daily.html', 
+                            calories=dailyTracker.total_calories,
+                            protein=dailyTracker.total_protein,
+                            fats = dailyTracker.total_fats,
+                            carbs = dailyTracker.total_carbs,
+                            products = dailyTracker.products,
+                            max=17000, set=zip(values, labels, colors))
 
 @app.route('/add_product', methods=['GET', 'PUT'])
 def add_product():
