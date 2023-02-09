@@ -28,13 +28,17 @@ def get_products_list():
 @app.route('/daily')
 def daily_tracker():
 
+    products = csvReader.get_products_list()
+
     return render_template('daily.html', 
                             calories=dailyTracker.total_calories,
                             protein=dailyTracker.total_protein,
                             fats = dailyTracker.total_fats,
                             carbs = dailyTracker.total_carbs,
                             products = dailyTracker.products,
-                            max=17000, set=zip(values, labels, colors))
+                            all_products = products,
+                            max=17000, 
+                            set=zip(values, labels, colors))
 
 @app.route('/add_product', methods=['GET', 'PUT'])
 def add_product():

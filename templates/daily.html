@@ -4,11 +4,16 @@
 
 {% block head %} 
   {{ super() }}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" />
+  <link href="//netdna.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+
   <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.8/js/bootstrap-select.min.js"></script>
 {% endblock %} 
 
 {% block content %}
-
 {% from 'bootstrap4/nav.html' import render_nav_item %}
 <div class="p-5">
   <h1>Daily tracker</h1>
@@ -20,8 +25,7 @@
     </nav>
   </div>
 
-
-  <div class="row">
+  <div class="row mb-5">
     <div class="col-sm-2">
       <!-- totals table -->
       <div class="mb-4">
@@ -46,8 +50,8 @@
         </table>
       </div>
     </div>
-    <div class="col-sm-10">
-      <canvas id="chart" width="600" height="400"></canvas>
+    <div class="col-sm-10 mt-4">
+      <canvas id="chart" width="450" height="300"></canvas>
       <script>
         var pieData = [
           {% for item, label, colors in set %}
@@ -60,7 +64,6 @@
         ];
     
         max = {{ max }}
-    
         // draw pie chart
         new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
       </script>
@@ -104,6 +107,25 @@
             {% endfor %}
         </tbody>
     </table>
+  </div>
+  <hr/>
+  <div class="mt-4">
+    <h3>Adauga produs</h3>
+    <div class="row">
+      <div class="col-sm-2">
+        <select class="selectpicker" form="add_product_form" data-show-subtext="false" data-live-search="true">
+          {% for product in all_products %}
+          <option>{{product.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-sm-10">
+        <form action="" id="add_product_form">
+          <input type="text" id="add_product_qt" placeholder="Cantitate">
+          <input type="submit" value="Adauga">
+        </form>
+      </div>
+    </div>  
   </div>
 </div>
 {% endblock %}
