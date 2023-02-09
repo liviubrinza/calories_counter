@@ -43,10 +43,10 @@
                     <td style="text-align: center">{{product.fats}}</td>
                     <td style="text-align: center">{{product.carbs}}</td>
                     <td>
-                        <button type="button" class="btn btn-danger px-3">
+                        <button type="button" class="btn btn-danger px-3" onclick="window.location='add_product';">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <button type="button" class="btn btn-primary px-3">
+                        <button type="button" class="btn btn-primary px-3" onclick="window.location='remove_product?name={{ product.name}}';">
                             <i class="fa fa-pencil"></i>
                         </button>
                     </td>

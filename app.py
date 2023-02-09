@@ -1,5 +1,5 @@
 from flask_bootstrap import Bootstrap4
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, url_for, request
 from CsvReader import CsvReader
 
 app = Flask(__name__)
@@ -20,3 +20,15 @@ def get_products_list():
 @app.route('/daily')
 def daily_tracker():
     return render_template('daily.html')
+
+
+@app.route('/add_product', methods=['GET', 'PUT'])
+def add_product():
+    print("ADD ITEM ENDPOINT")
+    return redirect(url_for('get_products_list'))
+
+@app.route('/remove_product', methods=['GET', 'DELETE'])
+def remove_product():
+    args = request.args
+    print("REMOVE ITEM ENDPOINT: " + str(args))
+    return redirect(url_for('get_products_list'))
