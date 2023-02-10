@@ -9,6 +9,12 @@
 {% block content %}
 
 <div class="p-5">
+
+    {% if message != None %}
+        <div class="alert alert-success">
+            {{message}}
+        </div>
+    {% endif %}
     <h1>Produse disponibile</h1>
 
     {% from 'bootstrap4/nav.html' import render_nav_item %}
@@ -43,10 +49,10 @@
                     <td style="text-align: center">{{product.fats}}</td>
                     <td style="text-align: center">{{product.carbs}}</td>
                     <td>
-                        <button type="button" class="btn btn-danger px-3" onclick="window.location='add_product';">
+                        <button type="button" class="btn btn-danger px-3" onclick="window.location='remove_product?name={{ product.name}}';">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <button type="button" class="btn btn-primary px-3" onclick="window.location='remove_product?name={{ product.name}}';">
+                        <button type="button" class="btn btn-primary px-3" onclick="window.location=''">
                             <i class="fa fa-pencil"></i>
                         </button>
                     </td>
@@ -59,23 +65,23 @@
     <h3>Adauga produs nou</h3>
     <div class="row">
         <div class="col-sm-4">
-            <form>
+            <form action="add_product" method="POST">
                 <div class="form-outline mb-4">
-                    <input type="text" id="nameField" class="form-control" placeholder="Nume produs" />
+                    <input type="text" name="name" class="form-control" placeholder="Nume produs" />
                 </div>          
                 <div class="form-outline mb-4">
-                    <input type="text" id="calField" class="form-control" placeholder="Calorii"/>
+                    <input type="text" name="calories" class="form-control" placeholder="Calorii"/>
                 </div>
                 <div class="form-outline mb-4">
-                    <input type="text" id="proteinField" class="form-control" placeholder="Proteine"/>
+                    <input type="text" name="protein" class="form-control" placeholder="Proteine"/>
                 </div>
                 <div class="form-outline mb-4">
-                    <input type="text" id="fatField" class="form-control" placeholder="Grasimi"/>
+                    <input type="text" name="fats" class="form-control" placeholder="Grasimi"/>
                 </div>
                 <div class="form-outline mb-4">
-                    <input type="text" id="carbField" class="form-control" placeholder="Carbohidrati"/>
+                    <input type="text" name="carbs" class="form-control" placeholder="Carbohidrati"/>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Adauga</button>
+                <input type="submit" class="btn btn-primary btn-block" value="Adauga"></button>
             </form>
         </div>
         <div class="col-sm-8"></div>
