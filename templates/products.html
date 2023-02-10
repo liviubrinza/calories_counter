@@ -9,12 +9,6 @@
 {% block content %}
 
 <div class="p-5">
-
-    {% if message != None %}
-        <div class="alert alert-success">
-            {{message}}
-        </div>
-    {% endif %}
     <h1>Produse disponibile</h1>
 
     {% from 'bootstrap4/nav.html' import render_nav_item %}
@@ -87,4 +81,10 @@
         <div class="col-sm-8"></div>
     </div>
 </div>
+
+{% if message != None %}
+<script type="text/javascript">
+    alert('{{ message }}');
+</script>
+{% endif %}
 {% endblock %}
