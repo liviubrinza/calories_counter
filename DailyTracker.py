@@ -8,13 +8,16 @@ class DailyTracker:
         self.total_fats = 0
         self.total_carbs = 0
         self.csvReader = csvReader
-        self.products = [self.csvReader.get_products_list()[0]]
+        self.products = []
 
-    def add_product(self, quantity):
+    def add_product(self, name, quantity):
+        product = self.csvReader.get_product_by_name(name)
+
+        if product:
+            self.products.append({'product': product, 'quantity': quantity})
+
+    def remove_product(self, name):
         pass
 
-    def remove_product(self):
-        pass
-
-    def adjust_product_quantity(self, quantity):
+    def adjust_product_quantity(self, name, quantity):
         pass

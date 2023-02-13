@@ -24,6 +24,14 @@ class CsvReader:
     def get_products_list(self):
         return self.products
 
+
+    def get_product_by_name(self, name):
+        for product in self.products:
+            if product.name == name:
+                return product
+        return None
+
+
     def add_new_product(self, new_product) :
         if new_product.name and new_product.calories and new_product.protein and new_product.fats and new_product.carbs:     
             self.products.append(new_product)

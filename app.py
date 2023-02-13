@@ -23,17 +23,60 @@ def main():
 
 @app.route('/products')
 def get_products_list():
-    message = None
-    if request.args and request.args['message']:
-        print("PRODUCT LIST MESSAGE: " + request.args['message'])
-        message = request.args['message']
+    success_message = None
+    error_message = None
 
+    if request.args:
+     if 'success_message' in request.args.keys() and request.args['success_message'] is not None:
+        success_message = request.args['success_message']
+    if 'error_message' in request.args.keys() and request.args['error_message'] is not None:
+        error_message = request.args['error_message']
+            
     products = csvReader.get_products_list()
-    return render_template('products.html', products=products, message=message)
+    return render_template('products.html', 
+                           products=products, 
+                           success_message=success_message,
+                           error_message=error_message)
+
+@app.route('/add_product', methods=['POST'])
+def add_product():
+    args = request.form
+
+    new_product = Product(name=args['name'],
+                          calories=args['calories'],
+                          protein=args['protein'],
+                          fats=args['fats'],
+                          carbs=args['carbs'])
+
+    retVal = csvReader.add_new_product(new_product=new_product)
+    success_message = None
+    error_message = None
+
+    if retVal:
+        success_message = "Successfully added product: " + args['name']
+    else:
+        error_message = "Error encountered while adding product: " + args['name']
+
+    return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
+
+@app.route('/remove_product', methods=['GET', 'DELETE'])
+def remove_product():
+    args = request.args
+    name = args['name']
+
+    retVal = csvReader.remove_product(product_name=name)
+    success_message = None
+    error_message = None
+
+    if retVal:
+        success_message = "Successfully removed product: " + args['name']
+    else:
+        error_message = "Error encountered while removing product: " + args['name']
+
+    return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
 
 @app.route('/daily')
 def daily_tracker():
-
     products = csvReader.get_products_list()
 
     return render_template('daily.html', 
@@ -46,39 +89,19 @@ def daily_tracker():
                             max=17000, 
                             set=zip(values, labels, colors))
 
-@app.route('/add_product', methods=['POST'])
-def add_product():
-    print("FORM")
+@app.route('/add_product_daily', methods=['GET', 'POST'])
+def add_product_daily():
     print(request.form)
-    args = request.form
 
-    new_product = Product(name=args['name'],
-                          calories=args['calories'],
-                          protein=args['protein'],
-                          fats=args['fats'],
-                          carbs=args['carbs'])
+    product = None
+    quantity = 0
 
-    retVal = csvReader.add_new_product(new_product=new_product)
-    
-    message = None
-    if retVal:
-        message = "Successfully added product: " + args['name']
-    else:
-        message = "Error encountered while adding product: " + args['name']
+    if request.form:
+        product = request.form.get('product')
+        quantity = request.form.get('quantity')
 
-    return redirect(url_for('get_products_list', message=message))
+    print(product + ": " + str(quantity))
 
-@app.route('/remove_product', methods=['GET', 'DELETE'])
-def remove_product():
-    args = request.args
-    name = args['name']
+    dailyTracker.add_product(name=product, quantity=quantity)
 
-    retVal = csvReader.remove_product(product_name=name)
-
-    message = None
-    if retVal:
-        message = "Successfully removed product: " + name
-    else:
-        message = "Error encountered while removing produc: " + name
-
-    return redirect(url_for('get_products_list', message=message))
+    return redirect(url_for('daily_tracker'))
