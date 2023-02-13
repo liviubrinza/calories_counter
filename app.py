@@ -79,6 +79,16 @@ def remove_product():
 def daily_tracker():
     products = csvReader.get_products_list()
 
+    success_message = None
+    error_message = None
+
+    if request.args:
+     if 'success_message' in request.args.keys() and request.args['success_message'] is not None:
+        success_message = request.args['success_message']
+    if 'error_message' in request.args.keys() and request.args['error_message'] is not None:
+        error_message = request.args['error_message']
+
+
     return render_template('daily.html', 
                             calories=dailyTracker.total_calories,
                             protein=dailyTracker.total_protein,
@@ -87,12 +97,12 @@ def daily_tracker():
                             products = dailyTracker.products,
                             all_products = products,
                             max=17000, 
-                            set=zip(values, labels, colors))
+                            set=zip(values, labels, colors),
+                            success_message=success_message, 
+                            error_message=error_message)
 
 @app.route('/add_product_daily', methods=['GET', 'POST'])
 def add_product_daily():
-    print(request.form)
-
     product = None
     quantity = 0
 
@@ -100,8 +110,31 @@ def add_product_daily():
         product = request.form.get('product')
         quantity = request.form.get('quantity')
 
-    print(product + ": " + str(quantity))
-
     dailyTracker.add_product(name=product, quantity=quantity)
 
     return redirect(url_for('daily_tracker'))
+
+@app.route('/remove_product_daily', methods=['GET', 'DELETE'])
+def remove_product_daily():
+
+    args = request.args
+    name = args['name']
+
+    retVal = dailyTracker.remove_product(name=name)
+    success_message = None
+    error_message = None
+
+    if retVal:
+        success_message = "Successfully removed product: " + name
+    else:
+        error_message = "Error encountered while removing product: " + name
+
+    return redirect(url_for('daily_tracker', success_message=success_message, error_message=error_message))
+
+@app.route('/adjust_product_daily', methods=['GET', 'POST'])
+def adjust_product_daily():
+
+    success_message = None
+    error_message = None
+
+    return redirect(url_for('daily_tracker', success_message=success_message, error_message=error_message))

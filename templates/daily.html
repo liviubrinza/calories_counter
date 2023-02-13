@@ -25,6 +25,19 @@
     </nav>
   </div>
 
+  <div class="mb-4">
+    {%if success_message %}
+    <div class="alert alert-success" role="alert">
+        {{success_message}}
+    </div>
+    {% endif %}
+    {%if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{error_message}}
+    </div>
+    {% endif %}
+  </div>
+
   <div class="row mb-5">
     <div class="col-sm-2">
       <!-- totals table -->
@@ -89,14 +102,14 @@
             {% for entry in products %}
             <tr>
                 <td>{{loop.index}}</td>
-                <td>{{entry.product.name}}</td>
+                <td>{{entry.name}}</td>
                 <td style="text-align: center">{{entry.quantity}}</td>
-                <td style="text-align: center">{{entry.product.calories}}</td>
-                <td style="text-align: center">{{entry.product.protein}}</td>
-                <td style="text-align: center">{{entry.product.fats}}</td>
-                <td style="text-align: center">{{entry.product.carbs}}</td>
+                <td style="text-align: center">{{entry.calories}}</td>
+                <td style="text-align: center">{{entry.protein}}</td>
+                <td style="text-align: center">{{entry.fats}}</td>
+                <td style="text-align: center">{{entry.carbs}}</td>
                 <td>
-                    <button type="button" class="btn btn-danger px-3" onclick="">
+                    <button type="button" class="btn btn-danger px-3"  onclick="window.location='remove_product_daily?name={{ entry.name }}';">
                         <i class="fa fa-trash"></i>
                     </button>
                     <button type="button" class="btn btn-primary px-3" onclick="">

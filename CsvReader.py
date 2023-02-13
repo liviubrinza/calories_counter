@@ -14,10 +14,10 @@ class CsvReader:
             for row in reader:
                 if line_count > 0 and row:
                     product = Product(name=row[0],
-                                        calories=row[1],
-                                        protein=row[2],
-                                        fats=row[3],
-                                        carbs=row[4])
+                                      calories=float(row[1]),
+                                      protein=float(row[2]),
+                                      fats=float(row[3]),
+                                      carbs=float(row[4]))
                     self.products.append(product)
                 line_count += 1
 
