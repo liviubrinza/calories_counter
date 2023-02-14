@@ -16,7 +16,7 @@
 {% block content %}
 {% from 'bootstrap4/nav.html' import render_nav_item %}
 <div class="p-5">
-  <h1>Daily tracker</h1>
+  <h1>Statistica zilnica</h1>
   <div class="mb-4">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="navbar-nav mr-auto">
@@ -37,6 +37,50 @@
     </div>
     {% endif %}
   </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modifica:</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <form action="{{url_for("adjust_product_daily")}}" method="POST">
+            <div class="form-group">
+              <label for="product-name" class="col-form-label">Nume:</label>
+              <input type="text" class="form-control" name="product-name" id="product-name" readonly>
+            </div>
+            <div class="form-group">
+                <label for="product-quantity" class="col-form-label">Cantitate:</label>
+                <input type="text" class="form-control" name="product-quantity" id="product-quantity">
+            </div>
+            <div style="display: flex; justify-content: flex-end">
+                <input type="submit" class="btn btn-primary" value="Modifica">
+            </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="text/javascript">
+  $('#exampleModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget) // Button that triggered the modal
+      var product = button.data('product'); // Extract info from data-* attributes
+
+      var modal = $(this)
+      modal.find('.modal-title').text('Modifica: ' + product.name)
+      modal.find('.modal-body #product-name').val(product.name)
+      modal.find('.modal-body #product-quantity').val(product.quantity)
+    })
+</script>
 
   <div class="row mb-5">
     <div class="col-sm-2">
@@ -112,9 +156,9 @@
                     <button type="button" class="btn btn-danger px-3"  onclick="window.location='remove_product_daily?name={{ entry.name }}';">
                         <i class="fa fa-trash"></i>
                     </button>
-                    <button type="button" class="btn btn-primary px-3" onclick="">
-                        <i class="fa fa-pencil"></i>
-                    </button>
+                    <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#exampleModal" data-product='{"name":"{{entry.name}}", "quantity": {{entry.quantity}}}'>
+                      <i class="fa fa-pencil"></i>
+                  </button>
                 </td>
             </tr>
             {% endfor %}

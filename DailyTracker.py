@@ -51,22 +51,41 @@ class DailyTracker:
         return retVal
 
     def adjust_product_quantity(self, name, quantity):
-        pass
+        retVal = False
+
+        for product in self.products:
+            if product['name'] == name:
+                product_data = self.csvReader.get_product_by_name(name)
+                
+                product['quantity'] = quantity
+                product['calories'] = round(float(product_data.calories * float(quantity) / 100), 2)
+                product['protein'] = round(float(product_data.protein * float(quantity) / 100), 2)
+                product['fats'] = round(float(product_data.fats * float(quantity) / 100), 2)
+                product['carbs'] = round(float(product_data.carbs * float(quantity) / 100), 2)
+                retVal = True
+
+        self._recalculate_daily_macros()
+        return retVal
 
     def _recalculate_daily_macros(self):
         self.total_calories = 0
-        self.total_protein = 0
-        self.total_fats = 0
-        self.total_carbs = 0
+        self.total_protein  = 0
+        self.total_fats     = 0
+        self.total_carbs    = 0
+
+        protein_percentage = 0
+        fats_percentage    = 0
+        carbs_percentage   = 0
         
         for product in self.products:
             self.total_calories += product['calories']
-            self.total_protein += product['protein']
-            self.total_fats += product['fats']
-            self.total_carbs += product['carbs']
+            self.total_protein  += product['protein']
+            self.total_fats     += product['fats']
+            self.total_carbs    += product['carbs']
 
-        protein_percentage = round(4 * self.total_protein / self.total_calories, 2)
-        fats_percentage = round(9 * self.total_fats / self.total_calories, 2)
-        carbs_percentage = round(4 * self.total_carbs / self.total_calories, 2)
+        if self.total_calories > 0:
+            protein_percentage = round(4 * self.total_protein / self.total_calories, 2)
+            fats_percentage    = round(9 * self.total_fats / self.total_calories, 2)
+            carbs_percentage   = round(4 * self.total_carbs / self.total_calories, 2)
 
         DailyTracker.values = [protein_percentage, fats_percentage, carbs_percentage]

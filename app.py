@@ -106,10 +106,10 @@ def daily_tracker():
 
 
     return render_template('daily.html', 
-                            calories=dailyTracker.total_calories,
-                            protein=dailyTracker.total_protein,
-                            fats = dailyTracker.total_fats,
-                            carbs = dailyTracker.total_carbs,
+                            calories=round(dailyTracker.total_calories, 2),
+                            protein=round(dailyTracker.total_protein, 2),
+                            fats = round(dailyTracker.total_fats, 2),
+                            carbs = round(dailyTracker.total_carbs, 2),
                             products = dailyTracker.products,
                             all_products = products,
                             max=17000, 
@@ -150,7 +150,18 @@ def remove_product_daily():
 @app.route('/adjust_product_daily', methods=['GET', 'POST'])
 def adjust_product_daily():
 
+    args = request.form
+
+    name=args['product-name']
+    quantity=args['product-quantity']
+
+    retVal = dailyTracker.adjust_product_quantity(name=name, quantity=quantity)
     success_message = None
     error_message = None
+    
+    if retVal:
+        success_message = "Successfully adjusted quantity for: "+ name
+    else:
+        error_message = "Error encountered while adjusting quantity for: " + name
 
     return redirect(url_for('daily_tracker', success_message=success_message, error_message=error_message))
