@@ -22,32 +22,34 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <form>
+                <form action="change_product" method="POST">
                     <div class="form-group">
                       <label for="product-name" class="col-form-label">Nume:</label>
-                      <input type="text" class="form-control" id="product-name">
+                      <input type="text" class="form-control" name="product-name" id="product-name">
                     </div>
                     <div class="form-group">
                       <label for="product-calories" class="col-form-label">Calorii:</label>
-                      <input type="text" class="form-control" id="product-calories"></textarea>
+                      <input type="text" class="form-control" name="product-calories" id="product-calories"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="product-protein" class="col-form-label">Proteine:</label>
-                        <input type="text" class="form-control" id="product-protein"></textarea>
+                        <input type="text" class="form-control" name="product-protein" id="product-protein"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="product-fats" class="col-form-label">Lipide:</label>
-                        <input type="text" class="form-control" id="product-fats"></textarea>
+                        <input type="text" class="form-control" name="product-fats" id="product-fats"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="product-carbs" class="col-form-label">Carbohidrati:</label>
-                        <input type="text" class="form-control" id="product-carbs"></textarea>
+                        <input type="text" class="form-control" name="product-carbs" id="product-carbs"></textarea>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end">
+                        <input type="submit" class="btn btn-primary" value="Modifica">
                     </div>
                 </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
-                  <button type="button" class="btn btn-primary">Modifica</button>
                 </div>
               </div>
             </div>
@@ -56,12 +58,15 @@
           <script type="text/javascript">
             $('#exampleModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget) // Button that triggered the modal
-                var recipient = button.data('name') // Extract info from data-* attributes
-                
-                console.log(recipient)
+                var recipient = button.data('product'); // Extract info from data-* attributes
+
                 var modal = $(this)
-                modal.find('.modal-title').text('Modifica: ' + recipient)
-                modal.find('.modal-body input').val(recipient)
+                modal.find('.modal-title').text('Modifica: ' + recipient.name)
+                modal.find('.modal-body #product-name').val(recipient.name)
+                modal.find('.modal-body #product-calories').val(recipient.calories)
+                modal.find('.modal-body #product-protein').val(recipient.protein)
+                modal.find('.modal-body #product-fats').val(recipient.fats)
+                modal.find('.modal-body #product-carbs').val(recipient.carbs)
               })
           </script>
 
@@ -114,7 +119,7 @@
                         <button type="button" class="btn btn-danger px-3" onclick="window.location='remove_product?name={{ product.name}}';">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#exampleModal" data-name="{{product.name}}">
+                        <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#exampleModal" data-product='{"name":"{{product.name}}", "calories": {{product.calories}}, "protein": {{product.protein}}, "fats": {{product.fats}}, "carbs": {{product.carbs}}}'>
                             <i class="fa fa-pencil"></i>
                         </button>
                     </td>

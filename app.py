@@ -75,6 +75,14 @@ def remove_product():
 
     return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
 
+@app.route('/change_product', methods=['GET', 'POST'])
+def change_product():
+    args = request.form
+    print(args)
+    return redirect(url_for('get_products_list'))
+
+
+
 @app.route('/daily')
 def daily_tracker():
     products = csvReader.get_products_list()
