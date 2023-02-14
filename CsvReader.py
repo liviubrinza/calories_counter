@@ -32,7 +32,7 @@ class CsvReader:
         return None
 
 
-    def add_new_product(self, new_product) :
+    def add_new_product(self, new_product):
         if new_product.name and new_product.calories and new_product.protein and new_product.fats and new_product.carbs:     
             self.products.append(new_product)
             print("[INFO] New product added")
@@ -48,4 +48,11 @@ class CsvReader:
                 print("[INFO] Product removed")
                 return True
         print("[ERROR] Product not found to remove")
+        return False
+
+    def change_product(self, changed_product):
+        for i in range(len(self.products)):
+            if self.products[i].name == changed_product.name:
+                self.products[i] = changed_product        
+                return True
         return False

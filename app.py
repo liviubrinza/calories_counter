@@ -1,5 +1,6 @@
 from flask_bootstrap import Bootstrap4
 from flask import Flask, render_template, redirect, url_for, request
+import json
 from CsvReader import CsvReader
 from DailyTracker import DailyTracker
 from Product import Product
@@ -75,13 +76,26 @@ def remove_product():
 
     return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
 
-@app.route('/change_product', methods=['GET', 'POST'])
+@app.route('/change_product', methods=['POST'])
 def change_product():
     args = request.form
     print(args)
-    return redirect(url_for('get_products_list'))
+    changed_product = Product(name=args['product-name'],
+                              calories=args['product-calories'],
+                              protein=args['product-protein'],
+                              fats=args['product-fats'],
+                              carbs=args['product-carbs'])
+    
+    retVal = csvReader.change_product(changed_product=changed_product)
+    success_message = None
+    error_message = None
+    
+    if retVal:
+        success_message = "Successfully updated product: " + changed_product.name
+    else:
+        error_message = "Product not found for update: " + changed_product.name
 
-
+    return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
 
 @app.route('/daily')
 def daily_tracker():

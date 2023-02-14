@@ -22,10 +22,10 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                <form action="change_product" method="POST">
+                <form action="{{url_for("change_product")}}" method="POST">
                     <div class="form-group">
                       <label for="product-name" class="col-form-label">Nume:</label>
-                      <input type="text" class="form-control" name="product-name" id="product-name">
+                      <input type="text" class="form-control" name="product-name" id="product-name" readonly>
                     </div>
                     <div class="form-group">
                       <label for="product-calories" class="col-form-label">Calorii:</label>
@@ -154,10 +154,4 @@
         <div class="col-sm-8"></div>
     </div>
 </div>
-
-<!-- {% if message != None %}
-<script type="text/javascript">
-    alert('{{ message }}');
-</script>
-{% endif %}
-{% endblock %} -->
+{% endblock %} 
