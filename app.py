@@ -12,12 +12,6 @@ bootstrap = Bootstrap4(app)
 csvReader = CsvReader()
 dailyTracker = DailyTracker(csvReader=csvReader)
 
-
-labels = ['Protein', 'Fats', 'Carbs']
-values = [30, 40, 30]
-colors = ["#1E81B0", "#DCE629", "#D93939"]
-
-
 @app.route("/")
 def main():
     return render_template('main.html')
@@ -89,7 +83,7 @@ def change_product():
     retVal = csvReader.change_product(changed_product=changed_product)
     success_message = None
     error_message = None
-    
+
     if retVal:
         success_message = "Successfully updated product: " + changed_product.name
     else:
@@ -119,7 +113,7 @@ def daily_tracker():
                             products = dailyTracker.products,
                             all_products = products,
                             max=17000, 
-                            set=zip(values, labels, colors),
+                            set=zip(DailyTracker.values, DailyTracker.labels, DailyTracker.colors),
                             success_message=success_message, 
                             error_message=error_message)
 
