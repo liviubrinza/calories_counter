@@ -113,7 +113,9 @@ def daily_tracker():
                             products = dailyTracker.products,
                             all_products = products,
                             max=17000, 
-                            set=zip(DailyTracker.values, DailyTracker.labels, DailyTracker.colors),
+                            values = DailyTracker.values,
+                            labels = DailyTracker.labels,
+                            colors = DailyTracker.colors,
                             success_message=success_message, 
                             error_message=error_message)
 

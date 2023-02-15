@@ -83,7 +83,7 @@
 </script>
 
   <div class="row mb-5">
-    <div class="col-sm-2">
+    <div class="col-3">
       <!-- totals table -->
       <div class="mb-4">
         <h3>Total zilnic</h3>
@@ -91,9 +91,9 @@
           <thead class="thead-dark">
             <tr>
               <th scope="col">Calorii</th>
-              <th scope="col">Proteine</th>
-              <th scope="col">Lipide</th>
-              <th scope="col">Carbohidrati</th>
+              <th scope="col" style="color: #1E81B0">Proteine</th>
+              <th scope="col" style="color: #DCE629">Lipide</th>
+              <th scope="col" style="color: #D93939">Carbohidrati</th>
             </tr>
           </thead>
           <tbody>
@@ -103,28 +103,27 @@
               <td style="text-align: center">{{fats}}</td>
               <td style="text-align: center">{{carbs}}</td>
             </tr>
+            <tr>
+              <td></td>
+              {% for value in values %}
+                <td style="text-align: center;">{{ (100 * value)|round|int }}%</td>
+              {% endfor %}
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
-    <div class="col-sm-10 mt-4">
+    <div class="col-6">
       <canvas id="chart" width="450" height="300"></canvas>
       <script>
-        var pieData = [
-          {% for item, label, colors in set %}
-            {
-              value: {{item}},
-              label: "{{label}}",
-              color : "{{colors}}"
-            },
-          {% endfor %}
-        ];
-    
-        max = {{ max }}
+        var pieData = [{value: {{values[0]}}, label: '{{labels[0]}}', color: '{{colors[0]}}'}, 
+                       {value: {{values[1]}}, label: '{{labels[1]}}', color: '{{colors[1]}}'}, 
+                       {value: {{values[2]}}, label: '{{labels[2]}}', color: '{{colors[2]}}'}];
         // draw pie chart
         new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
       </script>
     </div>
+    <div class="col-3"></div>
   </div>
 
   <div class="mb-4">
