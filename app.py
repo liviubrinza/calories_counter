@@ -35,9 +35,7 @@ def get_products_list():
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
-    print("IN ADD PRODUCTS")
     args = request.form
-    print(args)
 
     new_product = Product(name=args['product-name'],
                           calories=args['product-calories'],

@@ -20,9 +20,11 @@ class ProductsHandler:
                                       carbs=round(float(row[4]), 2))
                     self.products.append(product)
                 line_count += 1
+        
+        self.products
 
     def get_products_list(self):
-        return self.products
+        return sorted(self.products, key=lambda x: x.name)
 
 
     def get_product_by_name(self, name):
@@ -35,10 +37,8 @@ class ProductsHandler:
     def add_new_product(self, new_product):
         if new_product.name and new_product.calories and new_product.protein and new_product.fats and new_product.carbs:     
             self.products.append(new_product)
-            print("[INFO] New product added")
             return True
         else:
-            print("[ERROR] New product not complete!")
             return False
 
     def remove_product(self, product_name):
