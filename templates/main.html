@@ -8,11 +8,31 @@
 
 {% block content %}
 <div class="p-5">
-  <div>
-    <button onclick="location.href = 'products'" id="myButton" class="float-left submit-button" >Produse</button>
+  <div class="row">
+    <div class="col-sm-4" style="text-align: center;">
+      <h1>Daily tracker</h1>
+    </div>
   </div>
-  <div>
-    <button onclick="location.href = 'daily'" id="myButton" class="float-left submit-button" >Evidenta zilnica</button>
+  <div class="row">
+    <div class="mb-4"></div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <button onclick="location.href = 'products'" id="myButton" class="btn btn-primary btn-floating btn-lg">
+        <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp;Produse</button>
+    </div>
+    <div class="col-sm-3">
+      <div class="row" style="padding-bottom: 5px;">
+        <button onclick="location.href = 'daily'" id="myButton" class="btn btn-danger btn-floating btn-lg" >
+          Evidenta zilnica (Titi)&nbsp;&nbsp;<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="row">
+        <button onclick="location.href = 'daily'" id="myButton" class="btn btn-floating btn-lg" style="background-color: orange; color: white;" >
+          Evidenta zilnica (Inci)&nbsp;&nbsp;<i class="fa fa-angle-double-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
