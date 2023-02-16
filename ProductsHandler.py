@@ -1,13 +1,13 @@
 import csv
 from Product import Product
 
-class CsvReader:
+class ProductsHandler:
     filename = "products.csv"
 
     def __init__(self):
         self.products = []
 
-        with open(CsvReader.filename) as csvfile:
+        with open(ProductsHandler.filename) as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             line_count = 0
 

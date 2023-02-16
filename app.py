@@ -1,7 +1,7 @@
 from flask_bootstrap import Bootstrap4
 from flask import Flask, render_template, redirect, url_for, request
 import json
-from CsvReader import CsvReader
+from ProductsHandler import ProductsHandler
 from DailyTracker import DailyTracker
 from Product import Product
 
@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 bootstrap = Bootstrap4(app)
 
-csvReader = CsvReader()
-dailyTracker = DailyTracker(csvReader=csvReader)
+productsHandler = ProductsHandler()
+dailyTracker = DailyTracker(productsHandler=productsHandler)
 
 @app.route("/")
 def main():
@@ -27,7 +27,7 @@ def get_products_list():
     if 'error_message' in request.args.keys() and request.args['error_message'] is not None:
         error_message = request.args['error_message']
             
-    products = csvReader.get_products_list()
+    products = productsHandler.get_products_list()
     return render_template('products.html', 
                            products=products, 
                            success_message=success_message,
@@ -35,22 +35,24 @@ def get_products_list():
 
 @app.route('/add_product', methods=['POST'])
 def add_product():
+    print("IN ADD PRODUCTS")
     args = request.form
+    print(args)
 
-    new_product = Product(name=args['name'],
-                          calories=args['calories'],
-                          protein=args['protein'],
-                          fats=args['fats'],
-                          carbs=args['carbs'])
+    new_product = Product(name=args['product-name'],
+                          calories=args['product-calories'],
+                          protein=args['product-protein'],
+                          fats=args['product-fats'],
+                          carbs=args['product-carbs'])
 
-    retVal = csvReader.add_new_product(new_product=new_product)
+    retVal = productsHandler.add_new_product(new_product=new_product)
     success_message = None
     error_message = None
 
     if retVal:
-        success_message = "Successfully added product: " + args['name']
+        success_message = "Successfully added product: " + args['product-name']
     else:
-        error_message = "Error encountered while adding product: " + args['name']
+        error_message = "Error encountered while adding product: " + args['product-name']
 
     return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
 
@@ -59,7 +61,7 @@ def remove_product():
     args = request.args
     name = args['name']
 
-    retVal = csvReader.remove_product(product_name=name)
+    retVal = productsHandler.remove_product(product_name=name)
     success_message = None
     error_message = None
 
@@ -80,7 +82,7 @@ def change_product():
                               fats=args['product-fats'],
                               carbs=args['product-carbs'])
     
-    retVal = csvReader.change_product(changed_product=changed_product)
+    retVal = productsHandler.change_product(changed_product=changed_product)
     success_message = None
     error_message = None
 
@@ -93,7 +95,7 @@ def change_product():
 
 @app.route('/daily')
 def daily_tracker():
-    products = csvReader.get_products_list()
+    products = productsHandler.get_products_list()
 
     success_message = None
     error_message = None

@@ -1,4 +1,4 @@
-from CsvReader import CsvReader
+from ProductsHandler import ProductsHandler
 
 class DailyTracker:
 
@@ -6,16 +6,16 @@ class DailyTracker:
     values = [0, 0, 0]
     colors = ["#1E81B0", "#DCE629", "#D93939"]
 
-    def __init__(self, csvReader):
+    def __init__(self, productsHandler):
         self.total_calories = 0
         self.total_protein = 0
         self.total_fats = 0
         self.total_carbs = 0
-        self.csvReader = csvReader
+        self.productsHandler = productsHandler
         self.products = []
 
     def add_product(self, name, quantity):
-        product = self.csvReader.get_product_by_name(name)
+        product = self.productsHandler.get_product_by_name(name)
         
         if product:
             retVal = False
@@ -55,7 +55,7 @@ class DailyTracker:
 
         for product in self.products:
             if product['name'] == name:
-                product_data = self.csvReader.get_product_by_name(name)
+                product_data = self.productsHandler.get_product_by_name(name)
                 
                 product['quantity'] = quantity
                 product['calories'] = round(float(product_data.calories * float(quantity) / 100), 2)

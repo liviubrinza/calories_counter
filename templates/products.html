@@ -9,67 +9,112 @@
 {% block content %}
 
 <div class="p-5">
-    <h1>Produse disponibile</h1>
-
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Modifica:</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+    <!-- edit modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Modifica:</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <form action="{{url_for("change_product")}}" method="POST">
+                <div class="form-group">
+                    <label for="product-name" class="col-form-label">Nume:</label>
+                    <input type="text" class="form-control" name="product-name" id="product-name" readonly>
                 </div>
-                <div class="modal-body">
-                <form action="{{url_for("change_product")}}" method="POST">
+                <div class="form-group">
+                    <label for="product-calories" class="col-form-label">Calorii:</label>
+                    <input type="text" class="form-control" name="product-calories" id="product-calories"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-protein" class="col-form-label">Proteine:</label>
+                    <input type="text" class="form-control" name="product-protein" id="product-protein"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-fats" class="col-form-label">Lipide:</label>
+                    <input type="text" class="form-control" name="product-fats" id="product-fats"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-carbs" class="col-form-label">Carbohidrati:</label>
+                    <input type="text" class="form-control" name="product-carbs" id="product-carbs"></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end">
+                    <input type="submit" class="btn btn-primary" value="Modifica">
+                </div>
+            </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+            </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $('#editModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('product'); // Extract info from data-* attributes
+
+            var modal = $(this)
+            modal.find('.modal-title').text('Modifica: ' + recipient.name)
+            modal.find('.modal-body #product-name').val(recipient.name)
+            modal.find('.modal-body #product-calories').val(recipient.calories)
+            modal.find('.modal-body #product-protein').val(recipient.protein)
+            modal.find('.modal-body #product-fats').val(recipient.fats)
+            modal.find('.modal-body #product-carbs').val(recipient.carbs)
+            })
+    </script>
+
+    <!-- add modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="addModalLabel">Adauga produs nou:</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{url_for("add_product")}}" method="POST">
                     <div class="form-group">
-                      <label for="product-name" class="col-form-label">Nume:</label>
-                      <input type="text" class="form-control" name="product-name" id="product-name" readonly>
+                        <input type="text" class="form-control" name="product-name" id="product-name" placeholder="Nume produs"/>
                     </div>
                     <div class="form-group">
-                      <label for="product-calories" class="col-form-label">Calorii:</label>
-                      <input type="text" class="form-control" name="product-calories" id="product-calories"></textarea>
+                        <input type="text" class="form-control" name="product-calories" id="product-calories" placeholder="Calorii (100 g/ml)"/>
                     </div>
                     <div class="form-group">
-                        <label for="product-protein" class="col-form-label">Proteine:</label>
-                        <input type="text" class="form-control" name="product-protein" id="product-protein"></textarea>
+                        <input type="text" class="form-control" name="product-protein" id="product-protein" placeholder="Proteine"/>
                     </div>
                     <div class="form-group">
-                        <label for="product-fats" class="col-form-label">Lipide:</label>
-                        <input type="text" class="form-control" name="product-fats" id="product-fats"></textarea>
+                        <input type="text" class="form-control" name="product-fats" id="product-fats" placeholder="Lipide"/>
                     </div>
                     <div class="form-group">
-                        <label for="product-carbs" class="col-form-label">Carbohidrati:</label>
-                        <input type="text" class="form-control" name="product-carbs" id="product-carbs"></textarea>
+                        <input type="text" class="form-control" name="product-carbs" id="product-carbs" placeholder="Carbohidrati"/>
                     </div>
                     <div style="display: flex; justify-content: flex-end">
-                        <input type="submit" class="btn btn-primary" value="Modifica">
+                        <input type="submit" class="btn btn-primary" value="Adauga">
                     </div>
                 </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
-                </div>
-              </div>
             </div>
-          </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+            </div>
+        </div>
+        </div>
+    </div>
 
-          <script type="text/javascript">
-            $('#exampleModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget) // Button that triggered the modal
-                var recipient = button.data('product'); // Extract info from data-* attributes
+    <script type="text/javascript">
+        $('#addModal').on('shown.bs.modal', function () {
+            $('#myInput').trigger('focus')
+        })
+    </script>
 
-                var modal = $(this)
-                modal.find('.modal-title').text('Modifica: ' + recipient.name)
-                modal.find('.modal-body #product-name').val(recipient.name)
-                modal.find('.modal-body #product-calories').val(recipient.calories)
-                modal.find('.modal-body #product-protein').val(recipient.protein)
-                modal.find('.modal-body #product-fats').val(recipient.fats)
-                modal.find('.modal-body #product-carbs').val(recipient.carbs)
-              })
-          </script>
-
+    <h1>Produse disponibile</h1>
+    
     {% from 'bootstrap4/nav.html' import render_nav_item %}
 
     <div class="mb-4">
@@ -93,6 +138,11 @@
         {% endif %}
     </div>
 
+    <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#addModal">
+        <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;Adauga produs</i>
+    </button>
+
+    <hr/>
     <div class="mb-4">
         <table class="table table-striped w-auto">
             <thead class="thead-dark">
@@ -119,7 +169,7 @@
                         <button type="button" class="btn btn-danger px-3" onclick="window.location='remove_product?name={{ product.name}}';">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#exampleModal" data-product='{"name":"{{product.name}}", "calories": {{product.calories}}, "protein": {{product.protein}}, "fats": {{product.fats}}, "carbs": {{product.carbs}}}'>
+                        <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#editModal" data-product='{"name":"{{product.name}}", "calories": {{product.calories}}, "protein": {{product.protein}}, "fats": {{product.fats}}, "carbs": {{product.carbs}}}'>
                             <i class="fa fa-pencil"></i>
                         </button>
                     </td>
@@ -127,31 +177,6 @@
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-    <hr/>
-    <h3>Adauga produs nou</h3>
-    <div class="row">
-        <div class="col-sm-4">
-            <form action="add_product" method="POST">
-                <div class="form-outline mb-4">
-                    <input type="text" name="name" class="form-control" placeholder="Nume produs" />
-                </div>          
-                <div class="form-outline mb-4">
-                    <input type="text" name="calories" class="form-control" placeholder="Calorii"/>
-                </div>
-                <div class="form-outline mb-4">
-                    <input type="text" name="protein" class="form-control" placeholder="Proteine"/>
-                </div>
-                <div class="form-outline mb-4">
-                    <input type="text" name="fats" class="form-control" placeholder="Grasimi"/>
-                </div>
-                <div class="form-outline mb-4">
-                    <input type="text" name="carbs" class="form-control" placeholder="Carbohidrati"/>
-                </div>
-                <input type="submit" class="btn btn-primary btn-block" value="Adauga"></button>
-            </form>
-        </div>
-        <div class="col-sm-8"></div>
     </div>
 </div>
 {% endblock %} 
