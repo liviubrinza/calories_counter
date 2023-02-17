@@ -3,10 +3,10 @@ from ProductsHandler import ProductsHandler
 class DailyTracker:
 
     labels = ['Protein', 'Fats', 'Carbs']
-    values = [0, 0, 0]
     colors = ["#1E81B0", "#DCE629", "#D93939"]
 
     def __init__(self, productsHandler):
+        self.values = [0, 0, 0]
         self.total_calories = 0
         self.total_protein = 0
         self.total_fats = 0
@@ -67,6 +67,14 @@ class DailyTracker:
         self._recalculate_daily_macros()
         return retVal
 
+    def reset_day(self):
+        self.values = [0, 0, 0]
+        self.total_calories = 0
+        self.total_protein = 0
+        self.total_fats = 0
+        self.total_carbs = 0
+        self.products = []
+
     def _recalculate_daily_macros(self):
         self.total_calories = 0
         self.total_protein  = 0
@@ -88,4 +96,4 @@ class DailyTracker:
             fats_percentage    = round(9 * self.total_fats / self.total_calories, 2)
             carbs_percentage   = round(4 * self.total_carbs / self.total_calories, 2)
 
-        DailyTracker.values = [protein_percentage, fats_percentage, carbs_percentage]
+        self.values = [protein_percentage, fats_percentage, carbs_percentage]

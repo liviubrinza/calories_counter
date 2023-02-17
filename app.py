@@ -10,7 +10,9 @@ app = Flask(__name__)
 bootstrap = Bootstrap4(app)
 
 productsHandler = ProductsHandler()
-dailyTracker = DailyTracker(productsHandler=productsHandler)
+
+dTracker_Titi = DailyTracker(productsHandler=productsHandler)
+dTracker_Inci = DailyTracker(productsHandler=productsHandler)
 
 @app.route("/")
 def main():
@@ -93,6 +95,13 @@ def change_product():
 
 @app.route('/daily')
 def daily_tracker():
+
+    print("DAILY")
+    print(request.args)
+
+    user = request.args['user']
+    tracker_instance = dTracker_Titi if user == "Titi" else dTracker_Inci
+
     products = productsHandler.get_products_list()
 
     success_message = None
@@ -105,15 +114,16 @@ def daily_tracker():
         error_message = request.args['error_message']
 
 
-    return render_template('daily.html', 
-                            calories=round(dailyTracker.total_calories, 2),
-                            protein=round(dailyTracker.total_protein, 2),
-                            fats = round(dailyTracker.total_fats, 2),
-                            carbs = round(dailyTracker.total_carbs, 2),
-                            products = dailyTracker.products,
+    return render_template('daily.html',
+                            user = user, 
+                            calories=round(tracker_instance.total_calories, 2),
+                            protein=round(tracker_instance.total_protein, 2),
+                            fats = round(tracker_instance.total_fats, 2),
+                            carbs = round(tracker_instance.total_carbs, 2),
+                            products = tracker_instance.products,
                             all_products = products,
                             max=17000, 
-                            values = DailyTracker.values,
+                            values = tracker_instance.values,
                             labels = DailyTracker.labels,
                             colors = DailyTracker.colors,
                             success_message=success_message, 
@@ -123,22 +133,32 @@ def daily_tracker():
 def add_product_daily():
     product = None
     quantity = 0
+    user = None
+
+    print("ADD")
+    print(request.form)
 
     if request.form:
+        user = request.form.get('user')
         product = request.form.get('product')
         quantity = request.form.get('quantity')
 
-    dailyTracker.add_product(name=product, quantity=quantity)
+        tracker = dTracker_Titi if user == 'Titi' else dTracker_Inci
 
-    return redirect(url_for('daily_tracker'))
+        tracker.add_product(name=product, quantity=quantity)
+
+    return redirect(url_for('daily_tracker', user=user))
 
 @app.route('/remove_product_daily', methods=['GET', 'DELETE'])
 def remove_product_daily():
 
     args = request.args
     name = args['name']
+    user = args['user']
 
-    retVal = dailyTracker.remove_product(name=name)
+    tracker = dTracker_Titi if user == "Titi" else dTracker_Inci
+
+    retVal = tracker.remove_product(name=name)
     success_message = None
     error_message = None
 
@@ -147,7 +167,19 @@ def remove_product_daily():
     else:
         error_message = "Error encountered while removing product: " + name
 
-    return redirect(url_for('daily_tracker', success_message=success_message, error_message=error_message))
+    return redirect(url_for('daily_tracker', user=user, success_message=success_message, error_message=error_message))
+
+
+@app.route('/reset_day')
+def reset_day():
+    args = request.args
+    user = args['user']
+
+    tracker = dTracker_Titi if user == "Titi" else dTracker_Inci
+
+    tracker.reset_day()
+    return redirect(url_for('daily_tracker', user=user))
+
 
 @app.route('/adjust_product_daily', methods=['GET', 'POST'])
 def adjust_product_daily():
@@ -156,8 +188,11 @@ def adjust_product_daily():
 
     name=args['product-name']
     quantity=args['product-quantity']
+    user = args['user']
 
-    retVal = dailyTracker.adjust_product_quantity(name=name, quantity=quantity)
+    tracker = dTracker_Titi if user == 'Titi' else dTracker_Inci
+
+    retVal = tracker.adjust_product_quantity(name=name, quantity=quantity)
     success_message = None
     error_message = None
     
@@ -166,4 +201,4 @@ def adjust_product_daily():
     else:
         error_message = "Error encountered while adjusting quantity for: " + name
 
-    return redirect(url_for('daily_tracker', success_message=success_message, error_message=error_message))
+    return redirect(url_for('daily_tracker', user=user, success_message=success_message, error_message=error_message))
