@@ -4,7 +4,6 @@
 
 {% block head %} 
   {{ super() }}
-  
 {% endblock %} 
 
 {% block content %}
@@ -144,7 +143,11 @@
         {% endif %}
     </div>
 
-    <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#addModal" style="font-weight: bold; font-size: 120%;">
+    <button type="button" 
+            class="btn btn-primary px-3" 
+            data-toggle="modal" 
+            data-target="#addModal" 
+            style="font-weight: bold; font-size: 120%;">
         <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;Adauga produs</i>
     </button>
 
@@ -175,7 +178,15 @@
                         <button type="button" class="btn btn-danger px-3" onclick="window.location='remove_product?name={{ product.name}}';">
                             <i class="fa fa-trash"></i>
                         </button>
-                        <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#editModal" data-product='{"name":"{{product.name}}", "calories": {{product.calories}}, "protein": {{product.protein}}, "fats": {{product.fats}}, "carbs": {{product.carbs}}}'>
+                        <button type="button" 
+                                class="btn btn-primary px-3" 
+                                data-toggle="modal" 
+                                data-target="#editModal" 
+                                data-product='{"name":"{{product.name}}", 
+                                               "calories": {{product.calories}}, 
+                                               "protein": {{product.protein}}, 
+                                               "fats": {{product.fats}}, 
+                                               "carbs": {{product.carbs}}}'>
                             <i class="fa fa-pencil"></i>
                         </button>
                     </td>
