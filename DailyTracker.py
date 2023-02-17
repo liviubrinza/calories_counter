@@ -16,7 +16,14 @@ class DailyTracker:
 
     def add_product(self, name, quantity):
         product = self.productsHandler.get_product_by_name(name)
-        
+        quantity = int(quantity)
+        print("ADD PRODUCT")
+        print(product)
+        print(type(product.calories))
+        print(product.calories)
+
+
+
         if product:
             retVal = False
             new_entry = {'name' : product.name, 
@@ -92,8 +99,18 @@ class DailyTracker:
             self.total_carbs    += product['carbs']
 
         if self.total_calories > 0:
-            protein_percentage = round(4 * self.total_protein / self.total_calories, 2)
-            fats_percentage    = round(9 * self.total_fats / self.total_calories, 2)
-            carbs_percentage   = round(4 * self.total_carbs / self.total_calories, 2)
+            protein_percentage = round(4 * self._trim_float(self.total_protein / self.total_calories), 2)
+            fats_percentage    = round(9 * self._trim_float(self.total_fats / self.total_calories), 2)
+            carbs_percentage   = round(4 * self._trim_float(self.total_carbs / self.total_calories), 2)
 
         self.values = [protein_percentage, fats_percentage, carbs_percentage]
+
+    def _trim_float(self, value):
+        str_value = str(value)
+
+        if '.' in str_value:
+            dot_pos = str_value.find('.')
+            str_value = str_value[:dot_pos + 3]
+        
+            ret_val = float(str_value)
+            return ret_val
