@@ -75,7 +75,6 @@ def remove_product():
 @app.route('/change_product', methods=['POST'])
 def change_product():
     args = request.form
-    print(args)
     changed_product = Product(name=args['product-name'],
                               calories=args['product-calories'],
                               protein=args['product-protein'],
@@ -95,9 +94,6 @@ def change_product():
 
 @app.route('/daily')
 def daily_tracker():
-
-    print("DAILY")
-    print(request.args)
 
     user = request.args['user']
     tracker_instance = dTracker_Titi if user == "Titi" else dTracker_Inci
@@ -134,9 +130,6 @@ def add_product_daily():
     product = None
     quantity = 0
     user = None
-
-    print("ADD")
-    print(request.form)
 
     if request.form:
         user = request.form.get('user')
