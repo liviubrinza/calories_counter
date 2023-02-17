@@ -1,0 +1,5 @@
+// BUILD DOCKER IMAGE
+docker build -t calories_counter .
+
+// RUN DOCKER IMAGE
+docker run -p 5000:5000 -it calories_counter
