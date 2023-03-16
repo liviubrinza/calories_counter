@@ -11,8 +11,8 @@ bootstrap = Bootstrap4(app)
 
 productsHandler = ProductsHandler()
 
-dTracker_Titi = DailyTracker(productsHandler=productsHandler)
-dTracker_Inci = DailyTracker(productsHandler=productsHandler)
+dTracker_Titi = DailyTracker(productsHandler=productsHandler, username="titi")
+dTracker_Inci = DailyTracker(productsHandler=productsHandler, username="inci")
 
 @app.route("/")
 def main():
@@ -195,3 +195,14 @@ def adjust_product_daily():
         error_message = "Error encountered while adjusting quantity for: " + name
 
     return redirect(url_for('daily_tracker', user=user, success_message=success_message, error_message=error_message))
+
+@app.route('/save_stats')
+def save_stats():
+    args = request.args
+    user = args['user']
+
+    print("SAVE STATS: " + user)
+    tracker = dTracker_Titi if user == 'Titi' else dTracker_Inci
+
+    tracker.save_daily_stats()
+    return redirect(url_for('daily_tracker', user=user))

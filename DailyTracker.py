@@ -1,28 +1,55 @@
+import os
+from datetime import date
 from ProductsHandler import ProductsHandler
 
 class DailyTracker:
 
     labels = ['Protein', 'Fats', 'Carbs']
     colors = ["#1E81B0", "#DCE629", "#D93939"]
-
-    def __init__(self, productsHandler):
+    
+    def __init__(self, productsHandler, username):
         self.values = [0, 0, 0]
         self.total_calories = 0
         self.total_protein = 0
         self.total_fats = 0
         self.total_carbs = 0
-        self.productsHandler = productsHandler
         self.products = []
+        self.productsHandler = productsHandler
+        self.stats_path = username + "_stats"
+
+        if not os.path.exists(self.stats_path):
+            os.mkdir(self.stats_path)
+
+        self.save_daily_stats()
+
+    def save_daily_stats(self):
+        current_date = date.today().strftime("%Y_%m")
+        print(current_date)
+
+        month_path = os.path.join(self.stats_path, current_date)
+        if not os.path.exists(month_path):
+            os.mkdir(month_path)
+        
+        file_path = os.path.join(month_path, date.today().strftime("%d") + ".txt")
+        
+        with open(file_path, 'w') as f:
+            f.write("Total calories: " + str(self.total_calories) + "\n")
+            f.write("\tProtein: " + str(self.total_protein) + "\n")
+            f.write("\tFats: " + str(self.total_fats) + "\n")
+            f.write("\tCarbs: " + str(self.total_carbs) + "\n")
+            f.write("=========================\n")
+            f.write("Name \t\t Quantity \t\t Calories \t\t Protein \t\t Carbs\n")
+            for product in self.products:
+                f.write(product['name'] + " \t\t " 
+                        + str(product['quantity']) + " \t\t " 
+                        + str(product['calories']) + " \t\t " 
+                        + str(product['protein']) + " \t\t " 
+                        + str(product['fats']) + " \t\t " 
+                        + str(product['carbs']) + "\n")
 
     def add_product(self, name, quantity):
         product = self.productsHandler.get_product_by_name(name)
         quantity = int(quantity)
-        print("ADD PRODUCT")
-        print(product)
-        print(type(product.calories))
-        print(product.calories)
-
-
 
         if product:
             retVal = False
