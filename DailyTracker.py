@@ -8,7 +8,7 @@ class DailyTracker:
     colors = ["#1E81B0", "#DCE629", "#D93939"]
     
     def __init__(self, productsHandler, username):
-        self.values = [0, 0, 0]
+        self.percentage_values = [0, 0, 0]
         self.total_calories = 0
         self.total_protein = 0
         self.total_fats = 0
@@ -29,11 +29,11 @@ class DailyTracker:
         
         with open(file_path, 'w') as f:
             f.write("Total calories: " + str(self.total_calories) + "\n")
-            f.write("\tProtein: " + str(self.total_protein) + "\n")
-            f.write("\tFats: " + str(self.total_fats) + "\n")
-            f.write("\tCarbs: " + str(self.total_carbs) + "\n")
+            f.write("\tProtein: " + str(self.total_protein) + "(" + str(self.percentage_values[0] * 100) + "%)\n")
+            f.write("\tFats: " + str(self.total_fats) +  "(" + str(self.percentage_values[1] * 100) + "%)\n")
+            f.write("\tCarbs: " + str(self.total_carbs) +  "(" + str(self.percentage_values[2] * 100) + "%)\n")
             f.write("=========================\n")
-            f.write("Name \t\t Quantity \t\t Calories \t\t Protein \t\t Carbs\n")
+            f.write("Name \t\t Quantity \t Calories \t Protein \t Fats \t Carbs\n")
             for product in self.products:
                 f.write(product['name'] + " \t\t " 
                         + str(product['quantity']) + " \t\t " 
@@ -97,7 +97,7 @@ class DailyTracker:
         return retVal
 
     def reset_day(self):
-        self.values = [0, 0, 0]
+        self.percentage_values = [0, 0, 0]
         self.total_calories = 0
         self.total_protein = 0
         self.total_fats = 0
@@ -125,7 +125,7 @@ class DailyTracker:
             fats_percentage    = round(9 * self._trim_float(self.total_fats / self.total_calories), 2)
             carbs_percentage   = round(4 * self._trim_float(self.total_carbs / self.total_calories), 2)
 
-        self.values = [protein_percentage, fats_percentage, carbs_percentage]
+        self.percentage_values = [protein_percentage, fats_percentage, carbs_percentage]
 
     def _trim_float(self, value):
         str_value = str(value)

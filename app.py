@@ -119,7 +119,7 @@ def daily_tracker():
                             products = tracker_instance.products,
                             all_products = products,
                             max=17000, 
-                            values = tracker_instance.values,
+                            values = tracker_instance.percentage_values,
                             labels = DailyTracker.labels,
                             colors = DailyTracker.colors,
                             success_message=success_message, 
