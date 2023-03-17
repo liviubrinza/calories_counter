@@ -20,13 +20,8 @@ class DailyTracker:
         if not os.path.exists(self.stats_path):
             os.mkdir(self.stats_path)
 
-        self.save_daily_stats()
-
     def save_daily_stats(self):
-        current_date = date.today().strftime("%Y_%m")
-        print(current_date)
-
-        month_path = os.path.join(self.stats_path, current_date)
+        month_path = os.path.join(self.stats_path, date.today().strftime("%Y_%m"))
         if not os.path.exists(month_path):
             os.mkdir(month_path)
         
