@@ -14,6 +14,9 @@ productsHandler = ProductsHandler()
 dTracker_Titi = DailyTracker(productsHandler=productsHandler, username="titi")
 dTracker_Inci = DailyTracker(productsHandler=productsHandler, username="inci")
 
+def get_tracker_for_user(user_name):
+    return dTracker_Titi if user_name == "Titi" else dTracker_Inci
+
 @app.route("/")
 def main():
     return render_template('main.html')
@@ -96,7 +99,8 @@ def change_product():
 def daily_tracker():
 
     user = request.args['user']
-    tracker_instance = dTracker_Titi if user == "Titi" else dTracker_Inci
+
+    tracker_instance = get_tracker_for_user(user_name=user)
 
     products = productsHandler.get_products_list()
 
@@ -136,9 +140,9 @@ def add_product_daily():
         product = request.form.get('product')
         quantity = request.form.get('quantity')
 
-        tracker = dTracker_Titi if user == 'Titi' else dTracker_Inci
+        tracker_instance = get_tracker_for_user(user_name=user)
 
-        tracker.add_product(name=product, quantity=quantity)
+        tracker_instance.add_product(name=product, quantity=quantity)
 
     return redirect(url_for('daily_tracker', user=user))
 
@@ -149,9 +153,9 @@ def remove_product_daily():
     name = args['name']
     user = args['user']
 
-    tracker = dTracker_Titi if user == "Titi" else dTracker_Inci
+    tracker_instance = get_tracker_for_user(user_name=user)
 
-    retVal = tracker.remove_product(name=name)
+    retVal = tracker_instance.remove_product(name=name)
     success_message = None
     error_message = None
 
@@ -168,9 +172,9 @@ def reset_day():
     args = request.args
     user = args['user']
 
-    tracker = dTracker_Titi if user == "Titi" else dTracker_Inci
+    tracker_instance = get_tracker_for_user(user_name=user)
 
-    tracker.reset_day()
+    tracker_instance.reset_day()
     return redirect(url_for('daily_tracker', user=user))
 
 
@@ -183,9 +187,9 @@ def adjust_product_daily():
     quantity=args['product-quantity']
     user = args['user']
 
-    tracker = dTracker_Titi if user == 'Titi' else dTracker_Inci
+    tracker_instance = get_tracker_for_user(user_name=user)
 
-    retVal = tracker.adjust_product_quantity(name=name, quantity=quantity)
+    retVal = tracker_instance.adjust_product_quantity(name=name, quantity=quantity)
     success_message = None
     error_message = None
     
@@ -201,8 +205,7 @@ def save_stats():
     args = request.args
     user = args['user']
 
-    print("SAVE STATS: " + user)
-    tracker = dTracker_Titi if user == 'Titi' else dTracker_Inci
+    tracker_instance = get_tracker_for_user(user_name=user)
 
-    tracker.save_daily_stats()
+    tracker_instance.save_daily_stats()
     return redirect(url_for('daily_tracker', user=user))
