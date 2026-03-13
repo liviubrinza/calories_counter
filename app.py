@@ -209,3 +209,6 @@ def save_stats():
 
     tracker_instance.save_daily_stats()
     return redirect(url_for('daily_tracker', user=user))
+
+if __name__ == "__main__":
+    app.run(debug=True)
