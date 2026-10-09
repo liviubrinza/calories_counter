@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block head %}
     <meta charset="utf-8" />
-    <link rel="icon" type="image/png" href="https://s3.tradingview.com/userpics/3852993-zi9K_orig.png">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='calories_tracker.png') }}">
     <title>{% block title %}{% endblock %} - Calory Counter</title>
     {% endblock %} 
     {{ bootstrap.load_css() }}
