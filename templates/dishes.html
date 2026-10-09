@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}Prepared Dishes{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" />
+  <link href="//netdna.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.8/js/bootstrap-select.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="p-5">
+  <div class="row">
+    <div class="col-sm-4" style="text-align: center;">
+      <h1>Meniuri preparate</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="mb-4"></div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <button onclick="location.href = '/'" id="myButton" class="btn btn-primary btn-floating btn-lg" style="font-weight: bold; font-size: 120%;">
+        <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp;Inapoi</button>
+    </div>
+  </div>
+
+  <div class="mb-4 mt-4">
+    {%if success_message %}
+    <div class="alert alert-success" role="alert">
+        {{success_message}}
+    </div>
+    {% endif %}
+    {%if error_message %}
+    <div class="alert alert-danger" role="alert">
+        {{error_message}}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- new dish builder -->
+  <div class="mb-4">
+    <h3>Creeaza meniu nou</h3>
+    <form id="dishForm" action="{{url_for("add_dish")}}" method="POST">
+      <div class="form-group" style="max-width: 400px;">
+        <input type="text" class="form-control" name="dish-name" id="dish-name" placeholder="Nume meniu" required>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-2">
+          <select class="selectpicker" id="ingredient-select" data-live-search="true">
+            {% for product in products %}
+            <option style="font-weight: bold;">{{product.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-10" style="font-weight: bold;">
+          <input type="number" step=0.01 min=0 id="ingredient-quantity" placeholder="Cantitate (g / ml)">
+          <button type="button" class="btn btn-primary" style="font-weight: bold; font-size: 120%" onclick="addIngredient()">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Adauga ingredient
+          </button>
+        </div>
+      </div>
+
+      <div class="row mb-3" id="ingredients-section" style="display: none;">
+      <div class="col-6">
+      <table class="table table-striped w-auto" id="ingredients-table">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Index</th>
+            <th scope="col">Ingredient</th>
+            <th scope="col">Cantitate</th>
+            <th scope="col">Calorii</th>
+            <th scope="col" style="color: #1E81B0">Proteine</th>
+            <th scope="col" style="color: #DCE629">Lipide</th>
+            <th scope="col" style="color: #D93939">Carbo</th>
+            <th scope="col">Operatii</th>
+          </tr>
+        </thead>
+        <tbody id="ingredients-body"></tbody>
+        <tfoot>
+          <tr style="border-top: 2px solid black;">
+            <td></td>
+            <td>Total</td>
+            <td style="text-align: center" id="total-quantity"></td>
+            <td style="text-align: center" id="total-calories"></td>
+            <td style="text-align: center" id="total-protein"></td>
+            <td style="text-align: center" id="total-fats"></td>
+            <td style="text-align: center" id="total-carbs"></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>La 100 g</td>
+            <td></td>
+            <td style="text-align: center" id="per100-calories"></td>
+            <td style="text-align: center" id="per100-protein"></td>
+            <td style="text-align: center" id="per100-fats"></td>
+            <td style="text-align: center" id="per100-carbs"></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>Din calorii</td>
+            <td></td>
+            <td></td>
+            <td style="text-align: center; border: 1px solid black;" id="percent-protein"></td>
+            <td style="text-align: center; border: 1px solid black;" id="percent-fats"></td>
+            <td style="text-align: center; border: 1px solid black;" id="percent-carbs"></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+      </div>
+      <div class="col-6">
+        <canvas id="chart" width="450" height="300"></canvas>
+      </div>
+      </div>
+
+      <button type="submit" id="save-dish" class="btn btn-success" style="font-weight: bold; font-size: 120%;" disabled>
+        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Salveaza meniul
+      </button>
+    </form>
+  </div>
+  <hr/>
+
+  <!-- saved dishes -->
+  <div class="mb-4">
+    <h3>Meniuri salvate</h3>
+    {% if dishes %}
+    <table class="table table-striped w-auto">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Index</th>
+          <th scope="col">Nume</th>
+          <th scope="col">Cantitate</th>
+          <th scope="col">Calorii</th>
+          <th scope="col">Proteine</th>
+          <th scope="col">Lipide</th>
+          <th scope="col">Carbo</th>
+          <th scope="col">Calorii / 100 g</th>
+          <th scope="col">Operatii</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dish in dishes %}
+        <tr>
+          <td>{{loop.index}}</td>
+          <td>{{dish.name}}</td>
+          <td style="text-align: center">{{dish.total_quantity}}</td>
+          <td style="text-align: center">{{dish.total_calories}}</td>
+          <td style="text-align: center">{{dish.total_protein}}</td>
+          <td style="text-align: center">{{dish.total_fats}}</td>
+          <td style="text-align: center">{{dish.total_carbs}}</td>
+          <td style="text-align: center">{{dish.calories}}</td>
+          <td>
+            <button type="button" class="btn btn-danger px-3" onclick="removeDish(this)" data-name="{{dish.name}}" data-url="remove_dish?name={{dish.name|urlencode}}">
+              <i class="fa fa-trash"></i>
+            </button>
+            <button type="button" class="btn btn-primary px-3" onclick="$('#dish-details-{{loop.index}}').toggle()">
+              <i class="fa fa-list"></i>
+            </button>
+          </td>
+        </tr>
+        <tr id="dish-details-{{loop.index}}" style="display: none;">
+          <td></td>
+          <td colspan="8" style="font-weight: normal;">
+            <div class="mb-2">
+              La 100 g: {{dish.calories}} kcal &middot;
+              Proteine {{dish.protein}} &middot; Lipide {{dish.fats}} &middot; Carbo {{dish.carbs}}
+            </div>
+            <table class="table table-sm table-bordered w-auto mb-0">
+              <thead>
+                <tr>
+                  <th>Ingredient</th>
+                  <th>Cantitate</th>
+                  <th>Calorii</th>
+                  <th>Proteine</th>
+                  <th>Lipide</th>
+                  <th>Carbo</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for ingredient in dish.ingredients %}
+                <tr>
+                  <td>{{ingredient.name}}</td>
+                  <td style="text-align: center">{{ingredient.quantity}}</td>
+                  <td style="text-align: center">{{ingredient.calories}}</td>
+                  <td style="text-align: center">{{ingredient.protein}}</td>
+                  <td style="text-align: center">{{ingredient.fats}}</td>
+                  <td style="text-align: center">{{ingredient.carbs}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">Nu exista meniuri salvate.</p>
+    {% endif %}
+  </div>
+</div>
+
+<script type="text/javascript">
+  // per 100g values of all products, keyed by product name
+  var productsData = {{ products_data|tojson }};
+  var ingredients = [];
+
+  function round2(value) {
+    return Math.round(value * 100) / 100;
+  }
+
+  function addIngredient() {
+    var name = $('#ingredient-select').val();
+    var quantity = parseFloat($('#ingredient-quantity').val());
+
+    if (!name || !productsData[name]) {
+      return;
+    }
+    if (!(quantity > 0)) {
+      alert('Introdu o cantitate valida');
+      return;
+    }
+
+    var existing = ingredients.find(function (ingredient) { return ingredient.name === name; });
+    if (existing) {
+      existing.quantity = round2(existing.quantity + quantity);
+    } else {
+      ingredients.push({name: name, quantity: quantity});
+    }
+
+    $('#ingredient-quantity').val('').focus();
+    renderIngredients();
+  }
+
+  function removeIngredient(index) {
+    ingredients.splice(index, 1);
+    renderIngredients();
+  }
+
+  function addCell(row, value, centered) {
+    var cell = document.createElement('td');
+    cell.textContent = value;
+    if (centered) {
+      cell.style.textAlign = 'center';
+    }
+    row.appendChild(cell);
+    return cell;
+  }
+
+  function addHiddenInput(parent, name, value) {
+    var input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    parent.appendChild(input);
+  }
+
+  function renderIngredients() {
+    var body = document.getElementById('ingredients-body');
+    body.innerHTML = '';
+
+    var totals = {quantity: 0, calories: 0, protein: 0, fats: 0, carbs: 0};
+
+    ingredients.forEach(function (ingredient, index) {
+      var product = productsData[ingredient.name];
+      var values = {
+        calories: round2(product.calories * ingredient.quantity / 100),
+        protein: round2(product.protein * ingredient.quantity / 100),
+        fats: round2(product.fats * ingredient.quantity / 100),
+        carbs: round2(product.carbs * ingredient.quantity / 100)
+      };
+
+      totals.quantity += ingredient.quantity;
+      totals.calories += values.calories;
+      totals.protein += values.protein;
+      totals.fats += values.fats;
+      totals.carbs += values.carbs;
+
+      var row = document.createElement('tr');
+      addCell(row, index + 1);
+      addCell(row, ingredient.name);
+      addCell(row, ingredient.quantity, true);
+      addCell(row, values.calories, true);
+      addCell(row, values.protein, true);
+      addCell(row, values.fats, true);
+      addCell(row, values.carbs, true);
+
+      var operations = addCell(row, '');
+      var removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.className = 'btn btn-danger px-3';
+      removeButton.innerHTML = '<i class="fa fa-trash"></i>';
+      removeButton.onclick = function () { removeIngredient(index); };
+      operations.appendChild(removeButton);
+
+      addHiddenInput(operations, 'ingredient-name', ingredient.name);
+      addHiddenInput(operations, 'ingredient-quantity', ingredient.quantity);
+
+      body.appendChild(row);
+    });
+
+    $('#total-quantity').text(round2(totals.quantity));
+    $('#total-calories').text(round2(totals.calories));
+    $('#total-protein').text(round2(totals.protein));
+    $('#total-fats').text(round2(totals.fats));
+    $('#total-carbs').text(round2(totals.carbs));
+
+    var per100 = function (value) {
+      return totals.quantity > 0 ? round2(value * 100 / totals.quantity) : 0;
+    };
+    $('#per100-calories').text(per100(totals.calories));
+    $('#per100-protein').text(per100(totals.protein));
+    $('#per100-fats').text(per100(totals.fats));
+    $('#per100-carbs').text(per100(totals.carbs));
+
+    $('#ingredients-section').toggle(ingredients.length > 0);
+    $('#save-dish').prop('disabled', ingredients.length === 0);
+
+    renderChart(totals);
+  }
+
+  // macro split by calories (4 kcal/g protein and carbs, 9 kcal/g fats), same as the daily tracker
+  var chartLabels = {{ labels|tojson }};
+  var chartColors = {{ colors|tojson }};
+  var pieChart = null;
+
+  function renderChart(totals) {
+    if (pieChart) {
+      pieChart.destroy();
+      pieChart = null;
+    }
+
+    var values = [0, 0, 0];
+    if (totals.calories > 0) {
+      values = [round2(4 * totals.protein / totals.calories),
+                round2(9 * totals.fats / totals.calories),
+                round2(4 * totals.carbs / totals.calories)];
+    }
+
+    $('#percent-protein').text(Math.round(100 * values[0]) + '%');
+    $('#percent-fats').text(Math.round(100 * values[1]) + '%');
+    $('#percent-carbs').text(Math.round(100 * values[2]) + '%');
+
+    if (ingredients.length === 0) {
+      return;
+    }
+
+    var pieData = values.map(function (value, index) {
+      return {value: value, label: chartLabels[index], color: chartColors[index]};
+    });
+    pieChart = new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+  }
+
+  // Enter in the quantity field adds the ingredient, Enter elsewhere must not submit a half built dish
+  $('#dishForm').on('keydown', 'input', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (this.id === 'ingredient-quantity') {
+        addIngredient();
+      }
+    }
+  });
+
+  function removeDish(button) {
+    if (confirm('Stergi meniul "' + $(button).data('name') + '"?')) {
+      window.location.href = $(button).data('url');
+    }
+  }
+</script>
+{% endblock %}

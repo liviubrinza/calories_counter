@@ -165,9 +165,22 @@
     <div class="row">
       <div class="col-sm-2">
         <select class="selectpicker" form="productForm" id="product" name="product" data-live-search="true">
+          {% if all_dishes %}
+          <optgroup label="Meniuri preparate">
+            {% for dish in all_dishes %}
+            <option style="font-weight: bold;">{{dish.name}}</option>
+            {% endfor %}
+          </optgroup>
+          <optgroup label="Produse">
+            {% for product in all_products %}
+            <option style="font-weight: bold;">{{product.name}}</option>
+            {% endfor %}
+          </optgroup>
+          {% else %}
           {% for product in all_products %}
           <option style="font-weight: bold;">{{product.name}}</option>
           {% endfor %}
+          {% endif %}
         </select>
       </div>
       <div class="col-sm-10" style="font-weight: bold;">
@@ -207,7 +220,7 @@
                 <td style="text-align: center">{{entry.fats}}</td>
                 <td style="text-align: center">{{entry.carbs}}</td>
                 <td>
-                    <button type="button" class="btn btn-danger px-3"  onclick="window.location.href='remove_product_daily?user={{user}}&name={{entry.name}}';">
+                    <button type="button" class="btn btn-danger px-3"  onclick="window.location.href='remove_product_daily?user={{user}}&name={{entry.name|urlencode}}';">
                         <i class="fa fa-trash"></i>
                     </button>
                     <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#adjustModal" data-product='{"name":"{{entry.name}}", "quantity": {{entry.quantity}}}'>

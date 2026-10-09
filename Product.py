@@ -15,14 +15,6 @@ class Product:
                 + str(self.fats) + "," \
                 + str(self.carbs)
 
-    def __dict__(self):
-        return {'name': self.name,
-                 'calories': self.calories,
-                 'protein': self.protein,
-                 'fats': self.fats,
-                 'carbs': self.carbs
-                }
-    
     def to_csv_dict(self):
         return {'Nume': self.name,
                 'Calorii': self.calories,

@@ -1,13 +1,12 @@
 import os
 from datetime import date
-from ProductsHandler import ProductsHandler
 
 class DailyTracker:
 
     labels = ['Protein', 'Fats', 'Carbs']
     colors = ["#1E81B0", "#DCE629", "#D93939"]
     
-    def __init__(self, productsHandler, username):
+    def __init__(self, productsHandler, username, dishesHandler=None):
         self.percentage_values = [0, 0, 0]
         self.total_calories = 0
         self.total_protein = 0
@@ -15,6 +14,7 @@ class DailyTracker:
         self.total_carbs = 0
         self.products = []
         self.productsHandler = productsHandler
+        self.dishesHandler = dishesHandler
         self.stats_path = username + "_stats"
 
         if not os.path.exists(self.stats_path):
@@ -43,7 +43,7 @@ class DailyTracker:
                         + str(product['carbs']) + "\n")
 
     def add_product(self, name, quantity):
-        product = self.productsHandler.get_product_by_name(name)
+        product = self._get_item_by_name(name)
         quantity = int(quantity)
 
         if product:
@@ -84,8 +84,10 @@ class DailyTracker:
 
         for product in self.products:
             if product['name'] == name:
-                product_data = self.productsHandler.get_product_by_name(name)
-                
+                product_data = self._get_item_by_name(name)
+                if not product_data:
+                    break
+
                 product['quantity'] = quantity
                 product['calories'] = round(float(product_data.calories * float(quantity) / 100), 2)
                 product['protein'] = round(float(product_data.protein * float(quantity) / 100), 2)
@@ -95,6 +97,13 @@ class DailyTracker:
 
         self._recalculate_daily_macros()
         return retVal
+
+    def _get_item_by_name(self, name):
+        # raw products first, then prepared dishes (both expose values per 100g)
+        product = self.productsHandler.get_product_by_name(name)
+        if not product and self.dishesHandler:
+            product = self.dishesHandler.get_dish_by_name(name)
+        return product
 
     def reset_day(self):
         self.percentage_values = [0, 0, 0]

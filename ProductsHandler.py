@@ -47,7 +47,7 @@ class ProductsHandler:
         return None
 
     def add_new_product(self, new_product):
-        if new_product.name and new_product.calories >= 0 and new_product.protein >= 0 and new_product.fats >= 0 and new_product.carbs >=0:     
+        if new_product.name and not self.get_product_by_name(new_product.name) and new_product.calories >= 0 and new_product.protein >= 0 and new_product.fats >= 0 and new_product.carbs >=0:     
             self.products.append(new_product)
             self._write_csv_data()
             return True
