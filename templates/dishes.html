@@ -68,24 +68,25 @@
       </div>
 
       <div class="row mb-3" id="ingredients-section" style="display: none;">
-      <div class="col-6">
+      <div class="col-12">
+      <div class="table-responsive">
       <table class="table table-striped w-auto" id="ingredients-table">
         <thead class="thead-dark">
           <tr>
-            <th scope="col">Index</th>
+            <th scope="col" class="col-index">Index</th>
             <th scope="col">Ingredient</th>
             <th scope="col">Cantitate</th>
             <th scope="col">Calorii</th>
             <th scope="col" style="color: #1E81B0">Proteine</th>
             <th scope="col" style="color: #DCE629">Lipide</th>
             <th scope="col" style="color: #D93939">Carbo</th>
-            <th scope="col">Operatii</th>
+            <th scope="col"><span class="d-none d-md-inline">Operatii</span></th>
           </tr>
         </thead>
         <tbody id="ingredients-body"></tbody>
         <tfoot>
           <tr style="border-top: 2px solid black;">
-            <td></td>
+            <td class="col-index"></td>
             <td>Total</td>
             <td style="text-align: center" id="total-quantity"></td>
             <td style="text-align: center" id="total-calories"></td>
@@ -95,7 +96,7 @@
             <td></td>
           </tr>
           <tr>
-            <td></td>
+            <td class="col-index"></td>
             <td>La 100 g</td>
             <td></td>
             <td style="text-align: center" id="per100-calories"></td>
@@ -105,7 +106,7 @@
             <td></td>
           </tr>
           <tr>
-            <td></td>
+            <td class="col-index"></td>
             <td>Din calorii</td>
             <td></td>
             <td></td>
@@ -117,8 +118,11 @@
         </tfoot>
       </table>
       </div>
-      <div class="col-6">
-        <canvas id="chart" width="450" height="300"></canvas>
+      </div>
+      <div class="col-12">
+        <div class="chart-holder">
+          <canvas id="chart" width="450" height="300"></canvas>
+        </div>
       </div>
       </div>
 
@@ -133,10 +137,11 @@
   <div class="mb-4">
     <h3>Meniuri salvate</h3>
     {% if dishes %}
+    <div class="table-responsive">
     <table class="table table-striped w-auto">
       <thead class="thead-dark">
         <tr>
-          <th scope="col">Index</th>
+          <th scope="col" class="col-index">Index</th>
           <th scope="col">Nume</th>
           <th scope="col">Cantitate</th>
           <th scope="col">Calorii</th>
@@ -144,13 +149,13 @@
           <th scope="col">Lipide</th>
           <th scope="col">Carbo</th>
           <th scope="col">Calorii / 100 g</th>
-          <th scope="col">Operatii</th>
+          <th scope="col"><span class="d-none d-md-inline">Operatii</span></th>
         </tr>
       </thead>
       <tbody>
         {% for dish in dishes %}
         <tr>
-          <td>{{loop.index}}</td>
+          <td class="col-index">{{loop.index}}</td>
           <td>{{dish.name}}</td>
           <td style="text-align: center">{{dish.total_quantity}}</td>
           <td style="text-align: center">{{dish.total_calories}}</td>
@@ -168,7 +173,7 @@
           </td>
         </tr>
         <tr id="dish-details-{{loop.index}}" style="display: none;">
-          <td></td>
+          <td class="col-index"></td>
           <td colspan="8" style="font-weight: normal;">
             <div class="mb-2">
               La 100 g: {{dish.calories}} kcal &middot;
@@ -203,6 +208,7 @@
         {% endfor %}
       </tbody>
     </table>
+    </div>
     {% else %}
     <p class="text-muted">Nu exista meniuri salvate.</p>
     {% endif %}
@@ -286,7 +292,7 @@
       totals.carbs += values.carbs;
 
       var row = document.createElement('tr');
-      addCell(row, index + 1);
+      addCell(row, index + 1).className = 'col-index';
       addCell(row, ingredient.name);
       addCell(row, ingredient.quantity, true);
       addCell(row, values.calories, true);
@@ -357,7 +363,7 @@
     var pieData = values.map(function (value, index) {
       return {value: value, label: chartLabels[index], color: chartColors[index]};
     });
-    pieChart = new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+    pieChart = new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData, {responsive: true});
   }
 
   // Enter in the quantity field adds the ingredient, Enter elsewhere must not submit a half built dish

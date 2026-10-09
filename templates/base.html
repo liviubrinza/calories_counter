@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block head %}
     <meta charset="utf-8" />
     <link rel="icon" type="image/png" href="https://s3.tradingview.com/userpics/3852993-zi9K_orig.png">
@@ -19,6 +20,78 @@
         border: 1px solid #c9d8e8;
         border-radius: 14px;
         box-shadow: 0 4px 18px rgba(30, 60, 100, 0.15);
+      }
+      .chart-holder {
+        max-width: 380px;
+        margin: 0 auto;
+      }
+
+      /* phones: the panel hugs the screen edges so the content can use the whole width */
+      @media (max-width: 767.98px) {
+        .app-panel {
+          width: calc(100% - 12px);
+          margin: 6px auto;
+          border-radius: 10px;
+        }
+        .app-panel .p-5 {
+          padding: 12px !important;
+        }
+        .app-panel h1 {
+          font-size: 1.7rem;
+        }
+        .app-panel .card-body {
+          padding: 10px;
+        }
+        .app-panel .card-header,
+        .app-panel .card-footer {
+          padding: 8px 10px;
+        }
+        .app-panel .card-footer {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        /* compact tables so all columns fit the screen width */
+        .app-panel .table {
+          font-size: 0.8rem;
+        }
+        .app-panel .table th,
+        .app-panel .table td {
+          padding: 0.4rem 0.2rem;
+        }
+        .app-panel .table .btn {
+          padding: 0.2rem 0.45rem !important;
+          font-size: 0.8rem;
+          margin: 1px 0;
+        }
+        .app-panel .table td.text-nowrap {
+          white-space: normal !important;
+        }
+        .app-panel .col-index {
+          display: none;
+        }
+        .app-panel .chart-holder {
+          max-width: 240px;
+          margin-top: 10px;
+        }
+      }
+
+      /* narrow phones (360px and similar): a bit more compact still */
+      @media (max-width: 400px) {
+        .app-panel .p-5 {
+          padding: 8px !important;
+        }
+        .app-panel .card-body {
+          padding: 6px;
+        }
+        .app-panel .table {
+          font-size: 0.72rem;
+        }
+        .app-panel .table th,
+        .app-panel .table td {
+          padding: 0.35rem 0.15rem;
+        }
       }
     </style>
   </head>

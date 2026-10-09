@@ -143,27 +143,28 @@
             data-toggle="modal" 
             data-target="#addModal" 
             style="font-weight: bold; font-size: 120%;">
-        <i class="fa fa-plus-circle" aria-hidden="true">&nbsp;Adauga produs</i>
+        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Adauga produs
     </button>
 
     <hr/>
     <div class="mb-4">
+        <div class="table-responsive">
         <table class="table table-striped w-auto">
             <thead class="thead-dark">
                 <tr>
-                    <th scope="col">Index</th>
+                    <th scope="col" class="col-index">Index</th>
                     <th scope="col">Nume</th>
                     <th scope="col">Calorii</th>
                     <th scope="col">Proteine</th>
                     <th scope="col">Lipide</th>
                     <th scope="col">Carbo</th>
-                    <th scope="col">Operatii</th>
+                    <th scope="col"><span class="d-none d-md-inline">Operatii</span></th>
                 </tr>
             </thead>
             <tbody>
                 {% for product in products %}
                 <tr>
-                    <td>{{loop.index}}</td>
+                    <td class="col-index">{{loop.index}}</td>
                     <td>{{product.name}}</td>
                     <td style="text-align: left">{{product.calories}}</td>
                     <td style="text-align: center">{{product.protein}}</td>
@@ -189,6 +190,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 
