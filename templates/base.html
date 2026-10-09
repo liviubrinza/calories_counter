@@ -9,8 +9,20 @@
     {{ bootstrap.load_css() }}
     {{ bootstrap.load_js() }}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+      /* white back panel holding the content of every page */
+      .app-panel {
+        width: calc(100% - 32px);
+        max-width: 1140px;
+        margin: 24px auto;
+        background-color: #ffffff;
+        border: 1px solid #c9d8e8;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(30, 60, 100, 0.15);
+      }
+    </style>
   </head>
   <body style="background-color: aliceblue; font-size: 120%; font-weight: bold;">
-    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="content" class="app-panel">{% block content %}{% endblock %}</div>
   </body>
 </html>
