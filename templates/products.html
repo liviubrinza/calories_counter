@@ -1,17 +1,15 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 
-{% block title %}Products{% endblock %} 
+{% block title %}Products{% endblock %}
 
-{% block head %} 
-  {{ super() }}
-{% endblock %} 
+{% block header %}
+  {% with appbar_eyebrow='Baza de date', appbar_title='Produse disponibile' %}{% include '_appbar.html' %}{% endwith %}
+{% endblock %}
 
 {% block content %}
-
-<div class="p-5">
     <!-- edit modal -->
     <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editModalLabel">Modifica:</h5>
@@ -20,34 +18,34 @@
                 </button>
             </div>
             <div class="modal-body">
-            <form action="{{url_for("change_product")}}" method="POST">
+            <form id="editForm" action="{{url_for("change_product")}}" method="POST">
                 <div class="form-group">
-                    <label for="product-name" class="col-form-label">Nume:</label>
+                    <label for="product-name" class="col-form-label">Nume</label>
                     <input type="text" class="form-control" name="product-name" id="product-name" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="product-calories" class="col-form-label">Calorii:</label>
-                    <input type="text" class="form-control" name="product-calories" id="product-calories">
+                    <label for="product-calories" class="col-form-label">Calorii (100 g/ml)</label>
+                    <input type="text" inputmode="decimal" class="form-control" name="product-calories" id="product-calories">
                 </div>
-                <div class="form-group">
-                    <label for="product-protein" class="col-form-label">Proteine:</label>
-                    <input type="text" class="form-control" name="product-protein" id="product-protein">
-                </div>
-                <div class="form-group">
-                    <label for="product-fats" class="col-form-label">Lipide:</label>
-                    <input type="text" class="form-control" name="product-fats" id="product-fats">
-                </div>
-                <div class="form-group">
-                    <label for="product-carbs" class="col-form-label">Carbohidrati:</label>
-                    <input type="text" class="form-control" name="product-carbs" id="product-carbs">
-                </div>
-                <div style="display: flex; justify-content: flex-end">
-                    <input type="submit" class="btn btn-primary" value="Modifica">
+                <div class="form-row">
+                    <div class="form-group col-4">
+                        <label for="product-protein" class="col-form-label"><span class="dot dot-protein"></span>Proteine</label>
+                        <input type="text" inputmode="decimal" class="form-control" name="product-protein" id="product-protein">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="product-fats" class="col-form-label"><span class="dot dot-fats"></span>Lipide</label>
+                        <input type="text" inputmode="decimal" class="form-control" name="product-fats" id="product-fats">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="product-carbs" class="col-form-label"><span class="dot dot-carbs"></span>Carbo</label>
+                        <input type="text" inputmode="decimal" class="form-control" name="product-carbs" id="product-carbs">
+                    </div>
                 </div>
             </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+                <input type="submit" form="editForm" class="btn btn-primary" value="Modifica">
             </div>
             </div>
         </div>
@@ -70,38 +68,43 @@
 
     <!-- add modal -->
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="addModalLabel">Adauga produs nou:</h5>
+            <h5 class="modal-title" id="addModalLabel">Adauga produs nou</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
             <div class="modal-body">
-                <form action="{{url_for("add_product")}}" method="POST">
+                <form id="addForm" action="{{url_for("add_product")}}" method="POST">
                     <div class="form-group">
-                        <input type="text" class="form-control" name="product-name" id="product-name" placeholder="Nume produs"/>
+                        <label for="new-product-name">Nume produs</label>
+                        <input type="text" class="form-control" name="product-name" id="new-product-name" placeholder="ex. Iaurt grecesc"/>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name="product-calories" id="product-calories" placeholder="Calorii (100 g/ml)"/>
+                        <label for="new-product-calories">Calorii (100 g/ml)</label>
+                        <input type="text" inputmode="decimal" class="form-control" name="product-calories" id="new-product-calories" placeholder="0"/>
                     </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="product-protein" id="product-protein" placeholder="Proteine"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="product-fats" id="product-fats" placeholder="Lipide"/>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="product-carbs" id="product-carbs" placeholder="Carbohidrati"/>
-                    </div>
-                    <div style="display: flex; justify-content: flex-end">
-                        <input type="submit" class="btn btn-primary" value="Adauga">
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label for="new-product-protein"><span class="dot dot-protein"></span>Proteine</label>
+                            <input type="text" inputmode="decimal" class="form-control" name="product-protein" id="new-product-protein" placeholder="0"/>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="new-product-fats"><span class="dot dot-fats"></span>Lipide</label>
+                            <input type="text" inputmode="decimal" class="form-control" name="product-fats" id="new-product-fats" placeholder="0"/>
+                        </div>
+                        <div class="form-group col-4">
+                            <label for="new-product-carbs"><span class="dot dot-carbs"></span>Carbo</label>
+                            <input type="text" inputmode="decimal" class="form-control" name="product-carbs" id="new-product-carbs" placeholder="0"/>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+            <input type="submit" form="addForm" class="btn btn-primary" value="Adauga">
             </div>
         </div>
         </div>
@@ -113,89 +116,66 @@
         })
     </script>
 
-    <div style="padding-left: 5px;">
-        <div class="row align-items-center">
-          <div class="col-auto">
-            <button onclick="location.href = '/'" id="myButton" class="btn btn-primary btn-floating btn-lg" style="font-weight: bold; font-size: 120%;">
-              <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp;Inapoi</button>
-          </div>
-          <div class="col-auto">
-            <h1 class="mb-0">Produse disponibile</h1>
-          </div>
-        </div>
+    {% include '_alerts.html' %}
+
+    <div class="toolbar">
+        <div class="toolbar-info"><strong>{{ products|length }}</strong> produse &middot; valori la 100 g / ml</div>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+            <i class="fa fa-plus" aria-hidden="true"></i>Adauga produs
+        </button>
     </div>
 
-    <div class="mb-4">
-        {%if success_message %}
-        <div class="alert alert-success" role="alert">
-            {{success_message}}
-        </div>
-        {% endif %}
-        {%if error_message %}
-        <div class="alert alert-danger" role="alert">
-            {{error_message}}
-        </div>
-        {% endif %}
-    </div>
-
-    <button type="button" 
-            class="btn btn-primary px-3" 
-            data-toggle="modal" 
-            data-target="#addModal" 
-            style="font-weight: bold; font-size: 120%;">
-        <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Adauga produs
-    </button>
-
-    <hr/>
-    <div class="mb-4">
-        <div class="table-responsive">
-        <table class="table table-striped w-auto">
-            <thead class="thead-dark">
+    <section class="panel">
+        <div class="panel-flush">
+        <table class="data-table">
+            <thead>
                 <tr>
-                    <th scope="col" class="col-index">Index</th>
+                    <th scope="col" class="col-index">#</th>
                     <th scope="col">Nume</th>
-                    <th scope="col">Calorii</th>
-                    <th scope="col">Proteine</th>
-                    <th scope="col">Lipide</th>
-                    <th scope="col">Carbo</th>
-                    <th scope="col"><span class="d-none d-md-inline">Operatii</span></th>
+                    <th scope="col" class="num">Calorii</th>
+                    <th scope="col" class="num"><span class="dot dot-protein"></span>Proteine</th>
+                    <th scope="col" class="num"><span class="dot dot-fats"></span>Lipide</th>
+                    <th scope="col" class="num"><span class="dot dot-carbs"></span>Carbo</th>
+                    <th scope="col" class="col-actions"><span class="sr-only">Operatii</span></th>
                 </tr>
             </thead>
             <tbody>
                 {% for product in products %}
                 <tr>
                     <td class="col-index">{{loop.index}}</td>
-                    <td>{{product.name}}</td>
-                    <td style="text-align: left">{{product.calories}}</td>
-                    <td style="text-align: center">{{product.protein}}</td>
-                    <td style="text-align: center">{{product.fats}}</td>
-                    <td style="text-align: center">{{product.carbs}}</td>
-                    <td>
-                        <button type="button" class="btn btn-danger px-3" onclick="window.location='remove_product?name={{ product.name}}';">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        <button type="button" 
-                                class="btn btn-primary px-3" 
-                                data-toggle="modal" 
-                                data-target="#editModal" 
-                                data-product='{"name":"{{product.name}}", 
-                                               "calories": {{product.calories}}, 
-                                               "protein": {{product.protein}}, 
-                                               "fats": {{product.fats}}, 
+                    <td class="col-name">{{product.name}}</td>
+                    <td class="num col-kcal" data-label="Kcal">{{product.calories}}</td>
+                    <td class="num lbl-protein" data-label="Prot.">{{product.protein}}</td>
+                    <td class="num lbl-fats" data-label="Lip.">{{product.fats}}</td>
+                    <td class="num lbl-carbs" data-label="Carb.">{{product.carbs}}</td>
+                    <td class="col-actions">
+                      <div class="btn-group-actions">
+                        <button type="button"
+                                class="btn btn-icon btn-soft-primary"
+                                aria-label="Modifica"
+                                data-toggle="modal"
+                                data-target="#editModal"
+                                data-product='{"name":"{{product.name}}",
+                                               "calories": {{product.calories}},
+                                               "protein": {{product.protein}},
+                                               "fats": {{product.fats}},
                                                "carbs": {{product.carbs}}}'>
                             <i class="fa fa-pencil"></i>
                         </button>
+                        <button type="button" class="btn btn-icon btn-soft-danger" aria-label="Sterge" onclick="window.location='remove_product?name={{ product.name}}';">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                      </div>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         </div>
-    </div>
-</div>
+    </section>
 
 <!-- Back to top button -->
-<button type="button" class="btn btn-danger btn-floating btn-lg" id="btn-back-to-top" style="position: fixed; bottom: 20px; right: 20px; display: none;">
+<button type="button" class="btn btn-primary fab" id="btn-back-to-top" aria-label="Sus" style="display: none;">
     <i class="fa fa-arrow-up"></i>
 </button>
 <script type="text/javascript">
@@ -209,7 +189,7 @@
 
     function scrollFunction() {
         if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-            mybutton.style.display = "block";
+            mybutton.style.display = "flex";
         } else {
             mybutton.style.display = "none";
         }
@@ -222,4 +202,4 @@
         document.documentElement.scrollTop = 0;
     }
 </script>
-{% endblock %} 
+{% endblock %}

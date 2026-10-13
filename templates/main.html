@@ -2,52 +2,58 @@
 
 {% block title %}Main Page{% endblock %}
 
-{% block head %}
-  {{ super() }}
-  <style>
-    .main-btn {
-      width: 100%;
-      max-width: 350px;
-      font-weight: 600;
-      padding: 15px 0;
-    }
-  </style>
-{% endblock %}
-
 {% block content %}
-<div class="container py-5">
+<div class="home">
 
-  <div class="text-center mb-5">
-    <h1 class="display-5 fw-bold" style="color:#333;">Daily Tracker</h1>
-    <p class="text-muted" style="font-size: 1.1rem;">Alege o secțiune pentru a continua</p>
-  </div>
-
-  <div class="row justify-content-center">
-    <div class="col-md-6 d-flex flex-column align-items-center" style="gap: 2.5rem;">
-
-      <button onclick="location.href='products'"
-              class="btn btn-primary btn-lg shadow-sm main-btn">
-        <i class="fa fa-angle-double-left"></i>&nbsp; Produse
-      </button>
-
-      <button onclick="location.href='dishes'"
-              class="btn btn-success btn-lg shadow-sm main-btn">
-        <i class="fa fa-cutlery"></i>&nbsp; Meniuri Preparate
-      </button>
-
-      <button onclick="location.href='daily?user=Titi'"
-              class="btn btn-danger btn-lg shadow-sm main-btn">
-        Evidență zilnică (Titi) &nbsp; <i class="fa fa-angle-double-right"></i>
-      </button>
-
-      <button onclick="location.href='daily?user=Inci'"
-              class="btn btn-lg shadow-sm main-btn"
-              style="background-color: orange; color:white;">
-        Evidență zilnică (Inci) &nbsp; <i class="fa fa-angle-double-right"></i>
-      </button>
-
+  <div class="home-hero">
+    <img class="home-logo" src="{{ url_for('static', filename='calories_tracker.png') }}" alt="">
+    <div>
+      <h1 class="home-title">Daily Tracker</h1>
+      <p class="home-subtitle">Alege o secțiune pentru a continua</p>
     </div>
   </div>
+
+  <div class="home-section-label">Evidență zilnică</div>
+  <nav class="tile-list">
+    <a href="daily?user=Titi" class="tile tile-titi">
+      <span class="tile-icon tile-avatar">T</span>
+      <span class="tile-body">
+        <span class="tile-title">Evidență zilnică (Titi)</span>
+        <span class="tile-desc">Calorii și macronutrienți pentru azi</span>
+      </span>
+      <i class="fa fa-chevron-right tile-chevron" aria-hidden="true"></i>
+    </a>
+
+    <a href="daily?user=Inci" class="tile tile-inci">
+      <span class="tile-icon tile-avatar">I</span>
+      <span class="tile-body">
+        <span class="tile-title">Evidență zilnică (Inci)</span>
+        <span class="tile-desc">Calorii și macronutrienți pentru azi</span>
+      </span>
+      <i class="fa fa-chevron-right tile-chevron" aria-hidden="true"></i>
+    </a>
+  </nav>
+
+  <div class="home-section-label">Bază de date</div>
+  <nav class="tile-list">
+    <a href="products" class="tile tile-products">
+      <span class="tile-icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
+      <span class="tile-body">
+        <span class="tile-title">Produse</span>
+        <span class="tile-desc">Valori nutriționale la 100 g / ml</span>
+      </span>
+      <i class="fa fa-chevron-right tile-chevron" aria-hidden="true"></i>
+    </a>
+
+    <a href="dishes" class="tile tile-dishes">
+      <span class="tile-icon"><i class="fa fa-cutlery" aria-hidden="true"></i></span>
+      <span class="tile-body">
+        <span class="tile-title">Meniuri Preparate</span>
+        <span class="tile-desc">Rețete compuse din mai multe produse</span>
+      </span>
+      <i class="fa fa-chevron-right tile-chevron" aria-hidden="true"></i>
+    </a>
+  </nav>
 
 </div>
 {% endblock %}

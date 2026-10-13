@@ -4,7 +4,7 @@ from datetime import date
 class DailyTracker:
 
     labels = ['Protein', 'Fats', 'Carbs']
-    colors = ["#1E81B0", "#DCE629", "#D93939"]
+    colors = ["#3B82F6", "#F59E0B", "#EF4444"]
     
     def __init__(self, productsHandler, username, dishesHandler=None):
         self.percentage_values = [0, 0, 0]
