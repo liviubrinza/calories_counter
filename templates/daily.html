@@ -2,78 +2,19 @@
 
 {% block title %}Daily Tracker{% endblock %}
 
-{% block head %}
-  {{ super() }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/css/bootstrap-select.min.css" />
-  <link href="//netdna.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.8/js/bootstrap-select.min.js"></script>
-
-  <style>
-    /* one size for every button and input on the page */
-    .action-btn, .action-input {
-      font-size: 1.3rem !important;
-      font-weight: bold;
-    }
-
-    /* every section of the page sits in the same kind of card */
-    .section-card {
-      margin-bottom: 1.5rem;
-      border-color: #c9d8e8;
-      border-radius: 10px;
-    }
-    .section-card > .card-header {
-      background-color: #f0f6fc;
-      border-bottom-color: #c9d8e8;
-    }
-    .section-card > .card-footer {
-      background-color: #f0f6fc;
-      border-top-color: #c9d8e8;
-    }
-    .section-title {
-      font-size: 1.6rem;
-      font-weight: bold;
-      margin: 0;
-    }
-
-    .table td, .table th {
-      vertical-align: middle;
-    }
-  </style>
+{% block header %}
+  {% with appbar_eyebrow='Ziua curenta', appbar_title=user %}{% include '_appbar.html' %}{% endwith %}
 {% endblock %}
 
 {% block content %}
-<div class="p-5">
-  <div class="row align-items-center mb-4">
-    <div class="col-auto">
-      <button onclick="location.href = '/'" id="myButton" class="btn btn-primary btn-lg action-btn">
-        <i class="fa fa-angle-double-left" aria-hidden="true"></i>&nbsp;Inapoi</button>
-    </div>
-    <div class="col-auto">
-      <h1 class="mb-0">Ziua curenta - {{user}}</h1>
-    </div>
-  </div>
-
-  {%if success_message %}
-  <div class="alert alert-success mb-4" role="alert">
-      {{success_message}}
-  </div>
-  {% endif %}
-  {%if error_message %}
-  <div class="alert alert-danger mb-4" role="alert">
-      {{error_message}}
-  </div>
-  {% endif %}
+  {% include '_alerts.html' %}
 
   <!-- adjust quantity modal -->
   <div class="modal fade" id="adjustModal" tabindex="-1" role="dialog" aria-labelledby="adjustModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title section-title" id="adjustModalLabel">Modifica:</h5>
+          <h5 class="modal-title" id="adjustModalLabel">Modifica:</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -81,19 +22,22 @@
         <div class="modal-body">
         <form id="adjustForm" action="{{url_for("adjust_product_daily")}}" method="POST">
             <div class="form-group">
-              <label for="product-name" class="col-form-label">Nume:</label>
-              <input type="text" class="form-control form-control-lg action-input" name="product-name" id="product-name" readonly>
+              <label for="product-name" class="col-form-label">Nume</label>
+              <input type="text" class="form-control" name="product-name" id="product-name" readonly>
             </div>
             <div class="form-group mb-0">
-                <label for="product-quantity" class="col-form-label">Cantitate:</label>
-                <input type="text" class="form-control form-control-lg action-input" name="product-quantity" id="product-quantity">
+                <label for="product-quantity" class="col-form-label">Cantitate</label>
+                <div class="input-unit">
+                  <input type="text" inputmode="decimal" class="form-control form-control-lg" name="product-quantity" id="product-quantity">
+                  <span class="input-unit-suffix">g / ml</span>
+                </div>
                 <input type="hidden" name="user" id="user" value="{{user}}">
             </div>
         </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-lg action-btn" data-dismiss="modal">Inchide</button>
-          <button type="submit" form="adjustForm" class="btn btn-primary btn-lg action-btn">Modifica</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+          <button type="submit" form="adjustForm" class="btn btn-primary">Modifica</button>
         </div>
       </div>
     </div>
@@ -113,20 +57,20 @@
 
   <!-- reset day modal -->
   <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title section-title" id="resetModalLabel">Reseteaza ziua</h5>
+          <h5 class="modal-title" id="resetModalLabel">Reseteaza ziua</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <p class="mb-0">Vrei sa stergi toate produsele din ziua de azi?</p>
+          <p class="mb-0 text-secondary">Vrei sa stergi toate produsele din ziua de azi?</p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-lg action-btn" data-dismiss="modal">Inchide</button>
-          <button type="button" class="btn btn-danger btn-lg action-btn" onclick="window.location.href='reset_day?user={{user}}';">Reseteaza ziua</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+          <button type="button" class="btn btn-danger" onclick="window.location.href='reset_day?user={{user}}';">Reseteaza ziua</button>
         </div>
       </div>
     </div>
@@ -137,152 +81,146 @@
   </script>
 
   <!-- totals -->
-  <div class="card section-card">
-    <div class="card-header">
-      <h3 class="section-title">Total zilnic</h3>
+  <section class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-pie-chart" aria-hidden="true"></i></span>Total zilnic</h2>
     </div>
-    <div class="card-body">
-      <div class="row align-items-center">
-        <div class="col-md-7">
-          <table class="table table-striped table-bordered text-center mb-0">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Calorii</th>
-                <th scope="col" style="color: #1E81B0">Proteine</th>
-                <th scope="col" style="color: #DCE629">Lipide</th>
-                <th scope="col" style="color: #D93939">Carbohidrati</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{calories}}</td>
-                <td>{{protein}}</td>
-                <td>{{fats}}</td>
-                <td>{{carbs}}</td>
-              </tr>
-              <tr>
-                <td></td>
-                {% for value in values %}
-                  <td>{{ (100 * value)|round|int }}%</td>
-                {% endfor %}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="col-md-5">
-          <div class="chart-holder">
-            <canvas id="chart" width="450" height="300"></canvas>
+    <div class="panel-body">
+      <div class="summary">
+        <div class="chart-holder">
+          <canvas id="chart" width="300" height="300"></canvas>
+          <div class="chart-center">
+            <span class="chart-center-value">{{calories}}</span>
+            <span class="chart-center-label">Calorii</span>
           </div>
           <script>
             var pieData = [{value: {{values[0]}}, label: '{{labels[0]}}', color: '{{colors[0]}}'},
                            {value: {{values[1]}}, label: '{{labels[1]}}', color: '{{colors[1]}}'},
                            {value: {{values[2]}}, label: '{{labels[2]}}', color: '{{colors[2]}}'}];
-            // draw pie chart, sized to fit its column
-            new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData, {responsive: true});
+            // draw the macro doughnut, sized to fit its column
+            new Chart(document.getElementById("chart").getContext("2d")).Doughnut(pieData, macroChartOptions);
           </script>
+        </div>
+
+        <div class="macro-list">
+          {% set macros = [('protein', 'Proteine', protein), ('fats', 'Lipide', fats), ('carbs', 'Carbohidrati', carbs)] %}
+          {% for key, name, grams in macros %}
+          {% set pct = (100 * values[loop.index0])|round|int %}
+          <div class="macro macro-{{key}}">
+            <span class="macro-swatch"></span>
+            <span class="macro-name">{{name}}</span>
+            <span class="macro-value">{{grams}}<small>g</small></span>
+            <div class="macro-bar">
+              <div class="macro-track"><div class="macro-fill" style="width: {{pct}}%"></div></div>
+              <span class="macro-pct">{{pct}}%</span>
+            </div>
+          </div>
+          {% endfor %}
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- add product -->
-  <div class="card section-card">
-    <div class="card-header">
-      <h3 class="section-title">Adauga produs</h3>
+  <section class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-plus" aria-hidden="true"></i></span>Adauga produs</h2>
     </div>
-    <div class="card-body">
+    <div class="panel-body">
       <form id="productForm" action="{{url_for("add_product_daily")}}" method="post">
-        <div class="form-row">
-          <div class="col-md-6 mb-2">
-            <select class="selectpicker" form="productForm" id="product" name="product" data-live-search="true" data-width="100%" data-style="btn-light border btn-lg action-btn">
+        <div class="add-row">
+          <div class="add-row-picker">
+            <select class="selectpicker" form="productForm" id="product" name="product" data-live-search="true" data-width="100%" data-size="7" data-style="btn-select" data-none-results-text="Niciun rezultat pentru {0}">
               {% if all_dishes %}
               <optgroup label="Meniuri preparate">
                 {% for dish in all_dishes %}
-                <option style="font-weight: bold;">{{dish.name}}</option>
+                <option>{{dish.name}}</option>
                 {% endfor %}
               </optgroup>
               <optgroup label="Produse">
                 {% for product in all_products %}
-                <option style="font-weight: bold;">{{product.name}}</option>
+                <option>{{product.name}}</option>
                 {% endfor %}
               </optgroup>
               {% else %}
               {% for product in all_products %}
-              <option style="font-weight: bold;">{{product.name}}</option>
+              <option>{{product.name}}</option>
               {% endfor %}
               {% endif %}
             </select>
           </div>
-          <div class="col-md-3 mb-2">
-            <input type="number" step=0.01 min=0 id="add_product_qt" name="quantity" class="form-control form-control-lg action-input" placeholder="Cantitate (g / ml)">
+          <div class="input-unit">
+            <input type="number" step=0.01 min=0 inputmode="decimal" id="add_product_qt" name="quantity" class="form-control form-control-lg" placeholder="Cantitate" aria-label="Cantitate (g / ml)">
+            <span class="input-unit-suffix">g / ml</span>
             <input type="hidden" id="user" name="user" value="{{user}}">
           </div>
-          <div class="col-md-3 mb-2">
-            <button type="submit" class="btn btn-primary btn-lg action-btn btn-block">
-              <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Adauga
-            </button>
-          </div>
+          <button type="submit" class="btn btn-primary btn-lg">
+            <i class="fa fa-plus" aria-hidden="true"></i>Adauga
+          </button>
         </div>
       </form>
     </div>
-  </div>
+  </section>
 
   <!-- consumed products -->
-  <div class="card section-card">
-    <div class="card-header">
-      <h3 class="section-title">Produse</h3>
+  <section class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-list-ul" aria-hidden="true"></i></span>Produse</h2>
+      <span class="panel-subtitle">{{ products|length }} {{ 'produs' if products|length == 1 else 'produse' }}</span>
     </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-striped mb-0">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col" class="text-center col-index">Index</th>
-                    <th scope="col">Nume</th>
-                    <th scope="col" class="text-center">Cantitate</th>
-                    <th scope="col" class="text-center">Calorii</th>
-                    <th scope="col" class="text-center">Proteine</th>
-                    <th scope="col" class="text-center">Lipide</th>
-                    <th scope="col" class="text-center">Carbo</th>
-                    <th scope="col" class="text-center"><span class="d-none d-md-inline">Operatii</span></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for entry in products %}
-                <tr>
-                    <td class="text-center col-index">{{loop.index}}</td>
-                    <td>{{entry.name}}</td>
-                    <td class="text-center">{{entry.quantity}}</td>
-                    <td class="text-center">{{entry.calories}}</td>
-                    <td class="text-center">{{entry.protein}}</td>
-                    <td class="text-center">{{entry.fats}}</td>
-                    <td class="text-center">{{entry.carbs}}</td>
-                    <td class="text-center text-nowrap">
-                        <button type="button" class="btn btn-danger px-3"  onclick="window.location.href='remove_product_daily?user={{user}}&name={{entry.name|urlencode}}';">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                        <button type="button" class="btn btn-primary px-3" data-toggle="modal" data-target="#adjustModal" data-product='{"name":"{{entry.name}}", "quantity": {{entry.quantity}}}'>
-                          <i class="fa fa-pencil"></i>
-                        </button>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="8" class="text-center text-muted">Nu exista produse adaugate azi.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      </div>
+    <div class="panel-flush">
+      <table class="data-table">
+          <thead>
+              <tr>
+                  <th scope="col" class="col-index">#</th>
+                  <th scope="col">Nume</th>
+                  <th scope="col" class="num">Cantitate</th>
+                  <th scope="col" class="num">Calorii</th>
+                  <th scope="col" class="num"><span class="dot dot-protein"></span>Proteine</th>
+                  <th scope="col" class="num"><span class="dot dot-fats"></span>Lipide</th>
+                  <th scope="col" class="num"><span class="dot dot-carbs"></span>Carbo</th>
+                  <th scope="col" class="col-actions"><span class="sr-only">Operatii</span></th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for entry in products %}
+              <tr>
+                  <td class="col-index">{{loop.index}}</td>
+                  <td class="col-name">{{entry.name}}</td>
+                  <td class="num" data-label="Cant.">{{entry.quantity}}</td>
+                  <td class="num col-kcal" data-label="Kcal">{{entry.calories}}</td>
+                  <td class="num lbl-protein" data-label="Prot.">{{entry.protein}}</td>
+                  <td class="num lbl-fats" data-label="Lip.">{{entry.fats}}</td>
+                  <td class="num lbl-carbs" data-label="Carb.">{{entry.carbs}}</td>
+                  <td class="col-actions">
+                    <div class="btn-group-actions">
+                      <button type="button" class="btn btn-icon btn-soft-primary" aria-label="Modifica" data-toggle="modal" data-target="#adjustModal" data-product='{"name":"{{entry.name}}", "quantity": {{entry.quantity}}}'>
+                        <i class="fa fa-pencil"></i>
+                      </button>
+                      <button type="button" class="btn btn-icon btn-soft-danger" aria-label="Sterge" onclick="window.location.href='remove_product_daily?user={{user}}&name={{entry.name|urlencode}}';">
+                          <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+              </tr>
+              {% else %}
+              <tr class="empty-row">
+                  <td colspan="8">
+                    <i class="fa fa-cutlery empty-state-icon" aria-hidden="true"></i>
+                    Nu exista produse adaugate azi.
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
     </div>
-    <div class="card-footer">
-      <button type="button" class="btn btn-success btn-lg action-btn mr-3" onclick="window.location.href='save_stats?user={{user}}';">
-        <i class="fa fa-floppy-o" aria-hidden="true"></i>&nbsp;Salveaza ziua
+    <div class="panel-footer">
+      <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#resetModal">
+        <i class="fa fa-refresh" aria-hidden="true"></i>Reseteaza ziua
       </button>
-      <button type="button" class="btn btn-danger btn-lg action-btn" data-toggle="modal" data-target="#resetModal">
-        <i class="fa fa-refresh" aria-hidden="true"></i>&nbsp;Reseteaza ziua
+      <button type="button" class="btn btn-primary" onclick="window.location.href='save_stats?user={{user}}';">
+        <i class="fa fa-floppy-o" aria-hidden="true"></i>Salveaza ziua
       </button>
     </div>
-  </div>
-</div>
+  </section>
 {% endblock %}
