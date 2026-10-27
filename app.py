@@ -266,6 +266,24 @@ def add_dish():
 
     return redirect(url_for('get_dishes_list', success_message=success_message, error_message=error_message))
 
+@app.route('/update_dish', methods=['POST'])
+def update_dish():
+    args = request.form
+    original_name = args.get('original-name', '')
+    name = args.get('dish-name', '').strip()
+    ingredients = list(zip(args.getlist('ingredient-name'), args.getlist('ingredient-quantity')))
+
+    error = dishesHandler.update_dish(original_name=original_name, name=name, ingredients=ingredients)
+    success_message = None
+    error_message = None
+
+    if error:
+        error_message = "Error encountered while updating dish: " + error
+    else:
+        success_message = "Successfully updated dish: " + name
+
+    return redirect(url_for('get_dishes_list', success_message=success_message, error_message=error_message))
+
 @app.route('/remove_dish', methods=['GET', 'DELETE'])
 def remove_dish():
     args = request.args

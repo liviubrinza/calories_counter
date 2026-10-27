@@ -487,80 +487,51 @@ label,
   }
 }
 
-/* ---------- bootstrap-select ---------- */
-.bootstrap-select > .dropdown-toggle.btn-select {
-  height: 52px;
-  padding: 0 2.6rem 0 0.95rem;
-  background-color: var(--surface);
-  border: 1px solid var(--border-strong);
-  border-radius: 14px;
-  color: var(--text);
-  font-size: 1.02rem;
+/* ---------- product search (static/js/product-search.js) ---------- */
+.product-search {
+  position: relative;
+}
+.product-search-input {
+  padding-left: 2.6rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238a97ab' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0.95rem center;
   font-weight: 500;
-  box-shadow: none;
-  outline: none !important;
 }
-.bootstrap-select > .dropdown-toggle.btn-select:hover {
-  background-color: var(--surface);
-}
-.bootstrap-select > .dropdown-toggle.btn-select:focus,
-.bootstrap-select.show > .dropdown-toggle.btn-select {
-  border-color: var(--primary);
-  box-shadow: var(--ring);
-}
-.bootstrap-select > .dropdown-toggle.btn-select::after {
+.product-search-menu {
   position: absolute;
-  right: 16px;
-  top: 50%;
-  margin-top: -2px;
-  border-top-color: var(--muted);
-}
-.bootstrap-select > .dropdown-toggle.btn-select .filter-option {
-  display: flex;
-  align-items: center;
-}
-.bootstrap-select > .dropdown-toggle.btn-select .filter-option-inner {
-  min-width: 0;
-}
-.bootstrap-select .filter-option-inner-inner {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.bootstrap-select .dropdown-menu {
+  z-index: 1000;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  margin: 6px 0 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
   box-shadow: var(--shadow-lg);
-  padding: 6px;
-  margin-top: 6px;
 }
-.bootstrap-select .dropdown-menu.inner {
-  padding: 0;
-  margin: 0;
-  box-shadow: none;
+.product-search-menu[hidden],
+.product-search-menu [hidden] {
+  display: none;
 }
-.bootstrap-select .bs-searchbox {
-  padding: 4px 4px 8px;
-}
-.bootstrap-select .bs-searchbox .form-control {
-  height: 44px;
-  font-size: 1rem;
-}
-.bootstrap-select .dropdown-item {
+.product-search-option {
   padding: 10px 12px;
   border-radius: 10px;
   font-weight: 500;
-  white-space: normal;
+  cursor: pointer;
 }
-.bootstrap-select .dropdown-item:hover,
-.bootstrap-select .dropdown-item:focus {
+.product-search-option:hover {
   background-color: var(--surface-2);
 }
-.bootstrap-select .dropdown-item.active,
-.bootstrap-select .dropdown-item:active {
+.product-search-option.active {
   background-color: var(--primary-soft);
   color: var(--primary);
 }
-.bootstrap-select .dropdown-header {
+.product-search-header {
   padding: 10px 12px 4px;
   font-size: 0.72rem;
   font-weight: 700;
@@ -568,7 +539,7 @@ label,
   letter-spacing: 0.06em;
   color: var(--muted);
 }
-.bootstrap-select .no-results {
+.product-search-empty {
   margin: 4px;
   padding: 10px 12px;
   border-radius: 10px;

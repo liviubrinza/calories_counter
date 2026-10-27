@@ -10,12 +10,14 @@
   {% include '_alerts.html' %}
 
   <!-- new dish builder -->
-  <section class="panel">
+  <section class="panel" id="dish-builder">
     <div class="panel-header">
-      <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-cutlery" aria-hidden="true"></i></span>Creeaza meniu nou</h2>
+      <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-cutlery" aria-hidden="true"></i></span><span id="builder-title">Creeaza meniu nou</span></h2>
     </div>
     <div class="panel-body">
     <form id="dishForm" action="{{url_for("add_dish")}}" method="POST">
+      <!-- set while editing a saved dish, so the update knows which dish to replace -->
+      <input type="hidden" name="original-name" id="original-name" value="">
       <div class="form-group">
         <label for="dish-name">Nume meniu</label>
         <input type="text" class="form-control form-control-lg" name="dish-name" id="dish-name" placeholder="ex. Omleta cu legume" required>
@@ -24,11 +26,14 @@
       <label for="ingredient-select" class="field-label">Ingrediente</label>
       <div class="add-row">
         <div class="add-row-picker">
-          <select class="selectpicker" id="ingredient-select" data-live-search="true" data-width="100%" data-size="7" data-style="btn-select" data-none-results-text="Niciun rezultat pentru {0}">
-            {% for product in products %}
-            <option>{{product.name}}</option>
-            {% endfor %}
-          </select>
+          <div class="product-search" data-none-results-text="Niciun rezultat pentru {0}">
+            <input type="text" class="form-control form-control-lg product-search-input" id="ingredient-select" placeholder="Cauta produs" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="ingredient-menu" aria-expanded="false">
+            <ul class="product-search-menu" id="ingredient-menu" role="listbox">
+              {% for product in products %}
+              <li class="product-search-option">{{product.name}}</li>
+              {% endfor %}
+            </ul>
+          </div>
         </div>
         <div class="input-unit">
           <input type="number" step=0.01 min=0 inputmode="decimal" id="ingredient-quantity" class="form-control form-control-lg" placeholder="Cantitate" aria-label="Cantitate (g / ml)">
@@ -106,6 +111,9 @@
       <button type="submit" form="dishForm" id="save-dish" class="btn btn-primary" disabled>
         <i class="fa fa-floppy-o" aria-hidden="true"></i>Salveaza meniul
       </button>
+      <button type="button" id="cancel-edit" class="btn btn-secondary" style="display: none;" onclick="cancelEdit()">
+        <i class="fa fa-times" aria-hidden="true"></i>Renunta
+      </button>
     </div>
   </section>
 
@@ -146,6 +154,9 @@
             <div class="btn-group-actions">
               <button type="button" class="btn btn-icon btn-soft-primary" aria-label="Detalii" aria-expanded="false" onclick="$('#dish-details-{{loop.index}}').toggle(); $(this).attr('aria-expanded', $('#dish-details-{{loop.index}}').is(':visible'))">
                 <i class="fa fa-list"></i>
+              </button>
+              <button type="button" class="btn btn-icon btn-soft-primary" aria-label="Editeaza" onclick="editDish({{loop.index0}})">
+                <i class="fa fa-pencil"></i>
               </button>
               <button type="button" class="btn btn-icon btn-soft-danger" aria-label="Sterge" onclick="removeDish(this)" data-name="{{dish.name}}" data-url="remove_dish?name={{dish.name|urlencode}}">
                 <i class="fa fa-trash"></i>
@@ -194,6 +205,8 @@
   // per 100g values of all products, keyed by product name
   var productsData = {{ products_data|tojson }};
   var ingredients = [];
+  // saved dishes, in the same order as the saved dishes table, so they can be loaded back into the builder
+  var savedDishes = [{% for dish in dishes %}{name: {{ dish.name|tojson }}, ingredients: {{ dish.ingredients|tojson }}}{% if not loop.last %}, {% endif %}{% endfor %}];
 
   function round2(value) {
     return Math.round(value * 100) / 100;
@@ -204,6 +217,7 @@
     var quantity = parseFloat($('#ingredient-quantity').val());
 
     if (!name || !productsData[name]) {
+      alert('Alege un produs');
       return;
     }
     if (!(quantity > 0)) {
@@ -341,6 +355,11 @@
     pieChart = new Chart(document.getElementById("chart").getContext("2d")).Doughnut(pieData, macroChartOptions);
   }
 
+  // picking an ingredient moves on to its quantity
+  $('#ingredient-select').on('product-chosen', function () {
+    $('#ingredient-quantity').focus();
+  });
+
   // Enter in the quantity field adds the ingredient, Enter elsewhere must not submit a half built dish
   $('#dishForm').on('keydown', 'input', function (event) {
     if (event.key === 'Enter') {
@@ -350,6 +369,44 @@
       }
     }
   });
+
+  function editDish(index) {
+    var dish = savedDishes[index];
+
+    ingredients = dish.ingredients.map(function (ingredient) {
+      // a product removed since the dish was saved keeps the values it was saved with
+      if (!productsData[ingredient.name] && ingredient.quantity > 0) {
+        productsData[ingredient.name] = {
+          calories: ingredient.calories * 100 / ingredient.quantity,
+          protein: ingredient.protein * 100 / ingredient.quantity,
+          fats: ingredient.fats * 100 / ingredient.quantity,
+          carbs: ingredient.carbs * 100 / ingredient.quantity
+        };
+      }
+      return {name: ingredient.name, quantity: ingredient.quantity};
+    });
+
+    $('#dishForm').attr('action', '{{ url_for("update_dish") }}');
+    $('#original-name').val(dish.name);
+    $('#dish-name').val(dish.name);
+    $('#builder-title').text('Editeaza meniu: ' + dish.name);
+    $('#cancel-edit').show();
+    renderIngredients();
+
+    document.getElementById('dish-builder').scrollIntoView({behavior: 'smooth'});
+    // native focus, jQuery's .focus(arg) would bind arg as a focus handler instead
+    document.getElementById('ingredient-quantity').focus({preventScroll: true});
+  }
+
+  function cancelEdit() {
+    ingredients = [];
+    $('#dishForm').attr('action', '{{ url_for("add_dish") }}');
+    $('#original-name').val('');
+    $('#dish-name').val('');
+    $('#builder-title').text('Creeaza meniu nou');
+    $('#cancel-edit').hide();
+    renderIngredients();
+  }
 
   function removeDish(button) {
     if (confirm('Stergi meniul "' + $(button).data('name') + '"?')) {

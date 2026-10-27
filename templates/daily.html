@@ -130,24 +130,21 @@
       <form id="productForm" action="{{url_for("add_product_daily")}}" method="post">
         <div class="add-row">
           <div class="add-row-picker">
-            <select class="selectpicker" form="productForm" id="product" name="product" data-live-search="true" data-width="100%" data-size="7" data-style="btn-select" data-none-results-text="Niciun rezultat pentru {0}">
-              {% if all_dishes %}
-              <optgroup label="Meniuri preparate">
+            <div class="product-search" data-none-results-text="Niciun rezultat pentru {0}">
+              <input type="text" class="form-control form-control-lg product-search-input" id="product" name="product" placeholder="Cauta produs" aria-label="Cauta produs" autocomplete="off" required role="combobox" aria-autocomplete="list" aria-controls="product-menu" aria-expanded="false">
+              <ul class="product-search-menu" id="product-menu" role="listbox">
+                {% if all_dishes %}
+                <li class="product-search-header" role="presentation">Meniuri preparate</li>
                 {% for dish in all_dishes %}
-                <option>{{dish.name}}</option>
+                <li class="product-search-option">{{dish.name}}</li>
                 {% endfor %}
-              </optgroup>
-              <optgroup label="Produse">
+                <li class="product-search-header" role="presentation">Produse</li>
+                {% endif %}
                 {% for product in all_products %}
-                <option>{{product.name}}</option>
+                <li class="product-search-option">{{product.name}}</li>
                 {% endfor %}
-              </optgroup>
-              {% else %}
-              {% for product in all_products %}
-              <option>{{product.name}}</option>
-              {% endfor %}
-              {% endif %}
-            </select>
+              </ul>
+            </div>
           </div>
           <div class="input-unit">
             <input type="number" step=0.01 min=0 inputmode="decimal" id="add_product_qt" name="quantity" class="form-control form-control-lg" placeholder="Cantitate" aria-label="Cantitate (g / ml)">
@@ -159,6 +156,12 @@
           </button>
         </div>
       </form>
+      <script type="text/javascript">
+        // picking a product moves on to its quantity
+        document.getElementById('product').addEventListener('product-chosen', function () {
+          document.getElementById('add_product_qt').focus();
+        });
+      </script>
     </div>
   </section>
 
