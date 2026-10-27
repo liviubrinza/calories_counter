@@ -21,6 +21,8 @@ def get_tracker_for_user(user_name):
     tracker = trackers.get(user_name)
     if tracker is None:
         abort(404)
+    # every daily route goes through here, so a page opened after midnight starts the new day first
+    tracker.check_day_rollover()
     return tracker
 
 @app.route("/")

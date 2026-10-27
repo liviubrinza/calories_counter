@@ -119,15 +119,20 @@
     {% include '_alerts.html' %}
 
     <div class="toolbar">
-        <div class="toolbar-info"><strong>{{ products|length }}</strong> produse &middot; valori la 100 g / ml</div>
+        <div class="toolbar-info"><strong id="product-count">{{ products|length }}</strong> produse &middot; valori la 100 g / ml</div>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
             <i class="fa fa-plus" aria-hidden="true"></i>Adauga produs
         </button>
     </div>
 
+    <div class="search-box">
+        <i class="fa fa-search search-box-icon" aria-hidden="true"></i>
+        <input type="search" class="form-control" id="product-filter" placeholder="Cauta produs..." aria-label="Cauta produs" autocomplete="off">
+    </div>
+
     <section class="panel">
         <div class="panel-flush">
-        <table class="data-table">
+        <table class="data-table" id="products-table">
             <thead>
                 <tr>
                     <th scope="col" class="col-index">#</th>
@@ -169,10 +174,52 @@
                     </td>
                 </tr>
                 {% endfor %}
+                <tr class="empty-row d-none" id="no-results-row">
+                    <td colspan="7">
+                        <i class="fa fa-search empty-state-icon" aria-hidden="true"></i>
+                        Niciun produs gasit.
+                    </td>
+                </tr>
             </tbody>
         </table>
         </div>
     </section>
+
+<script type="text/javascript">
+    // Lowercase, strip accents (ă â î ș ț ...) and collapse punctuation/whitespace into single spaces
+    function normalizeText(text) {
+        return text
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, ' ')
+            .trim();
+    }
+
+    const filterInput = document.getElementById('product-filter');
+    const productRows = Array.from(document.querySelectorAll('#products-table tbody tr:not(#no-results-row)'));
+    const noResultsRow = document.getElementById('no-results-row');
+    const productCount = document.getElementById('product-count');
+
+    // Precompute normalized names once, so each keystroke only does string comparisons
+    productRows.forEach(function (row) {
+        row.dataset.search = normalizeText(row.querySelector('.col-name').textContent);
+    });
+
+    filterInput.addEventListener('input', function () {
+        const query = normalizeText(filterInput.value);
+        let visible = 0;
+
+        productRows.forEach(function (row) {
+            const match = row.dataset.search.includes(query);
+            row.classList.toggle('d-none', !match);
+            if (match) visible++;
+        });
+
+        noResultsRow.classList.toggle('d-none', visible > 0);
+        productCount.textContent = visible;
+    });
+</script>
 
 <!-- Back to top button -->
 <button type="button" class="btn btn-primary fab" id="btn-back-to-top" aria-label="Sus" style="display: none;">

@@ -105,13 +105,13 @@
         <div class="macro-list">
           {% set macros = [('protein', 'Proteine', protein), ('fats', 'Lipide', fats), ('carbs', 'Carbohidrati', carbs)] %}
           {% for key, name, grams in macros %}
-          {% set pct = (100 * values[loop.index0])|round|int %}
+          {% set pct = values[loop.index0] %}
           <div class="macro macro-{{key}}">
             <span class="macro-swatch"></span>
             <span class="macro-name">{{name}}</span>
             <span class="macro-value">{{grams}}<small>g</small></span>
             <div class="macro-bar">
-              <div class="macro-track"><div class="macro-fill" style="width: {{pct}}%"></div></div>
+              <div class="macro-track"><div class="macro-fill" style="width: {{[pct, 100]|min}}%"></div></div>
               <span class="macro-pct">{{pct}}%</span>
             </div>
           </div>

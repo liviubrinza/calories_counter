@@ -1,12 +1,22 @@
 import math
+import os
+import Persistence
 from Dish import Dish
 
 class DishesHandler:
-    # dishes are kept in memory only, a restart clears them
+    # dishes are persisted in <project_root>/persisted/dishes.json and reloaded at startup
+    filename = os.path.join(Persistence.PERSIST_DIR, "dishes.json")
 
     def __init__(self, productsHandler):
         self.dishes = []
         self.productsHandler = productsHandler
+        self._read_json_data()
+
+    def _read_json_data(self):
+        self.dishes = [Dish.from_dict(entry) for entry in Persistence.load_json(DishesHandler.filename, default=[])]
+
+    def _write_json_data(self):
+        Persistence.save_json(DishesHandler.filename, [dish.to_dict() for dish in self.dishes])
 
     def get_dishes_list(self):
         return sorted(self.dishes, key=lambda x: x.name)
@@ -54,12 +64,14 @@ class DishesHandler:
                             'carbs' : round(product.carbs * quantity / 100, 2)})
 
         self.dishes.append(Dish(name=name, ingredients=entries))
+        self._write_json_data()
         return None
 
     def remove_dish(self, dish_name):
         for dish in self.dishes:
             if dish.name == dish_name:
                 self.dishes.remove(dish)
+                self._write_json_data()
                 return True
         print("[ERROR] Dish not found to remove: " + dish_name)
         return False

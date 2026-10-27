@@ -22,3 +22,22 @@ class Dish:
         if self.total_quantity > 0:
             return round(value * 100 / self.total_quantity, 2)
         return 0
+
+    def to_dict(self):
+        return {'name': self.name,
+                'ingredients': self.ingredients,
+                'total_quantity': self.total_quantity,
+                'total_calories': self.total_calories,
+                'total_protein': self.total_protein,
+                'total_fats': self.total_fats,
+                'total_carbs': self.total_carbs,
+                'per_100g': {'calories': self.calories,
+                             'protein': self.protein,
+                             'fats': self.fats,
+                             'carbs': self.carbs}
+                }
+
+    @classmethod
+    def from_dict(cls, data):
+        # totals and per 100g values are derived from the ingredients, so they are recomputed
+        return cls(name=data['name'], ingredients=data['ingredients'])
