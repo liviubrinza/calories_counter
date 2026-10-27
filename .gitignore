@@ -134,3 +134,6 @@ dmypy.json
 # Local stats
 titi_stats
 inci_stats
+
+# Persisted app data (prepared dishes)
+persisted/
