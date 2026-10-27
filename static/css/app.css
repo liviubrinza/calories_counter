@@ -1270,6 +1270,23 @@ label,
   color: var(--text);
 }
 
+/* filter input with a leading search icon */
+.search-box {
+  position: relative;
+  margin-bottom: 16px;
+}
+.search-box .form-control {
+  padding-left: 2.6rem;
+}
+.search-box-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+}
+
 /* dish builder */
 .builder-chart {
   padding-top: 8px;
