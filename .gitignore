@@ -131,9 +131,5 @@ dmypy.json
 # Editor stuff
 .idea
 
-# Local stats
-titi_stats
-inci_stats
-
-# Persisted app data (prepared dishes)
+# Persisted app data (prepared dishes, daily stats)
 persisted/
