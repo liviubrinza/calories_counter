@@ -1,12 +1,15 @@
 import os
 from datetime import date
+import Persistence
 
 class DailyTracker:
 
     labels = ['Protein', 'Fats', 'Carbs']
     colors = ["#3B82F6", "#F59E0B", "#EF4444"]
+    # the current day is kept in <project_root>/persisted/<username>_daily.json, so a restart does not lose it
     # daily stats are saved in <project_root>/persisted/<username>_stats/<YYYY_MM>/<DD>.txt
-    persist_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "persisted")
+    # when the date changes, the tracked day is saved to the stats and the tracker starts a new empty day
+    persist_dir = Persistence.PERSIST_DIR
 
     def __init__(self, productsHandler, username, dishesHandler=None):
         self.percentage_values = [0, 0, 0]
@@ -15,17 +18,52 @@ class DailyTracker:
         self.total_fats = 0
         self.total_carbs = 0
         self.products = []
+        self.date = date.today()   # the day the tracked products belong to
         self.productsHandler = productsHandler
         self.dishesHandler = dishesHandler
         self.stats_path = os.path.join(DailyTracker.persist_dir, username + "_stats")
+        self.daily_filename = os.path.join(DailyTracker.persist_dir, username + "_daily.json")
 
         os.makedirs(self.stats_path, exist_ok=True)
+        self._read_json_data()
+        self.check_day_rollover()
+
+    def _read_json_data(self):
+        data = Persistence.load_json(self.daily_filename, default={})
+        self.products = data.get('products', [])
+        # files saved before the date was tracked are treated as today, so they roll over on the next day
+        if 'date' in data:
+            self.date = date.fromisoformat(data['date'])
+        self._recalculate_daily_macros()
+
+    def _write_json_data(self):
+        # totals are derived from the products, so they are stored for readability and recomputed on load
+        Persistence.save_json(self.daily_filename, {'date': self.date.isoformat(),
+                                                    'products': self.products,
+                                                    'total_calories': round(self.total_calories, 2),
+                                                    'total_protein': round(self.total_protein, 2),
+                                                    'total_fats': round(self.total_fats, 2),
+                                                    'total_carbs': round(self.total_carbs, 2),
+                                                    'percentages': {'protein': self.percentage_values[0],
+                                                                    'fats': self.percentage_values[1],
+                                                                    'carbs': self.percentage_values[2]}
+                                                    })
+
+    def check_day_rollover(self):
+        # called at startup and before every tracker request, so a missed midnight (server off) is still handled
+        if self.date == date.today():
+            return
+
+        if self.products:
+            self.save_daily_stats()
+        self.reset_day()
 
     def save_daily_stats(self):
-        month_path = os.path.join(self.stats_path, date.today().strftime("%Y_%m"))
+        # stats are filed under the tracked day, not the moment of saving (matters when saving after midnight)
+        month_path = os.path.join(self.stats_path, self.date.strftime("%Y_%m"))
         os.makedirs(month_path, exist_ok=True)
 
-        file_path = os.path.join(month_path, date.today().strftime("%d") + ".txt")
+        file_path = os.path.join(month_path, self.date.strftime("%d") + ".txt")
         
         with open(file_path, 'w') as f:
             f.write("Total calories: " + str(self.total_calories) + "\n")
@@ -69,6 +107,7 @@ class DailyTracker:
                 self.products.append(new_entry)
         
             self._recalculate_daily_macros()
+            self._write_json_data()
 
     def remove_product(self, name):
         retVal = False
@@ -77,6 +116,8 @@ class DailyTracker:
                 self.products.remove(product)
                 retVal = True
         self._recalculate_daily_macros()
+        if retVal:
+            self._write_json_data()
         return retVal
 
     def adjust_product_quantity(self, name, quantity):
@@ -88,7 +129,7 @@ class DailyTracker:
                 if not product_data:
                     break
 
-                product['quantity'] = quantity
+                product['quantity'] = round(float(quantity), 2)
                 product['calories'] = round(float(product_data.calories * float(quantity) / 100), 2)
                 product['protein'] = round(float(product_data.protein * float(quantity) / 100), 2)
                 product['fats'] = round(float(product_data.fats * float(quantity) / 100), 2)
@@ -96,6 +137,8 @@ class DailyTracker:
                 retVal = True
 
         self._recalculate_daily_macros()
+        if retVal:
+            self._write_json_data()
         return retVal
 
     def _get_item_by_name(self, name):
@@ -112,6 +155,8 @@ class DailyTracker:
         self.total_fats = 0
         self.total_carbs = 0
         self.products = []
+        self.date = date.today()
+        self._write_json_data()
 
     def _recalculate_daily_macros(self):
         self.total_calories = 0
