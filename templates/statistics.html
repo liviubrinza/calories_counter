@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Statistici{% endblock %}
+
+{% block header %}
+  {% with appbar_eyebrow='Istoric', appbar_title='Statistici' %}{% include '_appbar.html' %}{% endwith %}
+{% endblock %}
+
+{% block content %}
+  {% for user, days in users_stats.items() %}
+  <section class="panel">
+    <div class="panel-header">
+      <h2 class="panel-title">
+        <span class="panel-title-icon panel-title-avatar"><img src="{{ url_for('static', filename='images/' + user.lower() + '.png') }}" alt=""></span>
+        {{ user }}
+      </h2>
+      <span class="panel-subtitle">{{ days|length }} zile</span>
+    </div>
+    <div class="panel-flush">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col" class="col-index">#</th>
+          <th scope="col">Data</th>
+          <th scope="col" class="num">Calorii</th>
+          <th scope="col" class="num"><span class="dot dot-protein"></span>Proteine</th>
+          <th scope="col" class="num"><span class="dot dot-fats"></span>Lipide</th>
+          <th scope="col" class="num"><span class="dot dot-carbs"></span>Carbo</th>
+          <th scope="col" class="col-actions"><span class="sr-only">Operatii</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for day in days %}
+        <tr>
+          <td class="col-index">{{ loop.index }}</td>
+          <td class="col-name">{{ day.date.strftime('%d.%m.%Y') }}</td>
+          <td class="num col-kcal" data-label="Kcal">{{ day.calories }}</td>
+          <td class="num lbl-protein" data-label="Prot.">{{ day.protein }}</td>
+          <td class="num lbl-fats" data-label="Lip.">{{ day.fats }}</td>
+          <td class="num lbl-carbs" data-label="Carb.">{{ day.carbs }}</td>
+          {# empty actions column, keeps the data-table column convention for the phone layout #}
+          <td class="col-actions"></td>
+        </tr>
+        {% else %}
+        <tr class="empty-row">
+          <td colspan="7">
+            <i class="fa fa-bar-chart empty-state-icon" aria-hidden="true"></i>
+            Nicio zi salvata inca.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </section>
+  {% endfor %}
+{% endblock %}

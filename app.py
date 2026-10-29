@@ -222,6 +222,11 @@ def save_stats():
     tracker_instance.save_daily_stats()
     return redirect(url_for('daily_tracker', user=user))
 
+@app.route('/statistici')
+def statistics():
+    users_stats = {user: tracker.get_saved_stats() for user, tracker in trackers.items()}
+    return render_template('statistics.html', users_stats=users_stats)
+
 @app.route('/dishes')
 def get_dishes_list():
     success_message = None

@@ -80,6 +80,38 @@ class DailyTracker:
                         + str(product['fats']) + " \t\t " 
                         + str(product['carbs']) + "\n")
 
+    def get_saved_stats(self):
+        # reads back only the totals header of every saved day, newest first; the product lines are skipped
+        days = []
+        for month_dir in os.listdir(self.stats_path):
+            month_path = os.path.join(self.stats_path, month_dir)
+            if not os.path.isdir(month_path):
+                continue
+            for day_file in os.listdir(month_path):
+                try:
+                    year, month = month_dir.split("_")
+                    day_date = date(int(year), int(month), int(day_file.removesuffix(".txt")))
+                except ValueError:
+                    continue
+
+                totals = {}
+                with open(os.path.join(month_path, day_file)) as f:
+                    for line in f:
+                        if line.startswith("="):
+                            break
+                        # "Total calories: 1646.8" or "\tProtein: 168.82(41.0%)"
+                        key, _, value = line.strip().partition(":")
+                        totals[key] = round(float(value.split("(")[0]), 2)
+
+                days.append({'date': day_date,
+                             'calories': totals.get('Total calories', 0),
+                             'protein': totals.get('Protein', 0),
+                             'fats': totals.get('Fats', 0),
+                             'carbs': totals.get('Carbs', 0)})
+
+        days.sort(key=lambda day: day['date'], reverse=True)
+        return days
+
     def add_product(self, name, quantity):
         product = self._get_item_by_name(name)
         quantity = int(quantity)

@@ -223,6 +223,14 @@ a:hover {
   color: var(--primary);
   font-size: 0.9rem;
 }
+.panel-title-avatar {
+  overflow: hidden;
+}
+.panel-title-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .panel-subtitle {
   font-size: 0.85rem;
   color: var(--muted);
@@ -1077,6 +1085,7 @@ label,
 }
 .tile-products .tile-icon { background: var(--primary-soft); color: var(--primary); }
 .tile-dishes .tile-icon { background: var(--dishes-soft); color: var(--dishes); }
+.tile-stats .tile-icon { background: var(--info-soft); color: var(--info); }
 .tile-titi .tile-icon { background: var(--titi-soft); color: var(--titi); }
 .tile-inci .tile-icon { background: var(--inci-soft); color: var(--inci); }
 @media (min-width: 768px) {
