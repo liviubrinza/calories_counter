@@ -158,6 +158,37 @@ def add_product_daily():
 
     return redirect(url_for('daily_tracker', user=user))
 
+@app.route('/add_custom_product_daily', methods=['POST'])
+def add_custom_product_daily():
+    args = request.form
+    user = args.get('user')
+    name = args.get('product-name', '').strip()
+
+    tracker_instance = get_tracker_for_user(user_name=user)
+
+    success_message = None
+    error_message = None
+
+    try:
+        # accept a decimal comma as well, since the fields are free text
+        values = {key: float(args.get('product-' + key, '').replace(',', '.') or 0)
+                  for key in ('calories', 'protein', 'fats', 'carbs', 'quantity')}
+    except ValueError:
+        values = None
+
+    if not name:
+        error_message = "Error encountered while adding product: the name is missing"
+    elif values is None or any(value < 0 for value in values.values()):
+        error_message = "Error encountered while adding product: invalid values for " + name
+    else:
+        error = tracker_instance.add_custom_product(name=name, **values)
+        if error:
+            error_message = "Error encountered while adding product: " + error
+        else:
+            success_message = "Successfully added product: " + name
+
+    return redirect(url_for('daily_tracker', user=user, success_message=success_message, error_message=error_message))
+
 @app.route('/remove_product_daily', methods=['GET', 'DELETE'])
 def remove_product_daily():
 

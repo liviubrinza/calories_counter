@@ -141,6 +141,32 @@ class DailyTracker:
             self._recalculate_daily_macros()
             self._write_json_data()
 
+    def add_custom_product(self, name, calories, protein, fats, carbs, quantity):
+        # one-off product that is not in the products list; its per 100g values are kept on the entry
+        # so the quantity can still be adjusted later. Returns an error message, or None on success.
+        if any(entry['name'] == name for entry in self.products):
+            return "a product with this name is already in today's list: " + name
+        if self._get_item_by_name(name):
+            return "a product or dish with this name already exists, pick it from the search: " + name
+
+        quantity = round(float(quantity), 2)
+        per_100g = {'calories': round(float(calories), 2),
+                    'protein': round(float(protein), 2),
+                    'fats': round(float(fats), 2),
+                    'carbs': round(float(carbs), 2)}
+
+        self.products.append({'name': name,
+                              'quantity': quantity,
+                              'calories': round(per_100g['calories'] * quantity / 100, 2),
+                              'protein': round(per_100g['protein'] * quantity / 100, 2),
+                              'fats': round(per_100g['fats'] * quantity / 100, 2),
+                              'carbs': round(per_100g['carbs'] * quantity / 100, 2),
+                              'per_100g': per_100g})
+
+        self._recalculate_daily_macros()
+        self._write_json_data()
+        return None
+
     def remove_product(self, name):
         retVal = False
         for product in self.products:
@@ -157,15 +183,20 @@ class DailyTracker:
 
         for product in self.products:
             if product['name'] == name:
-                product_data = self._get_item_by_name(name)
-                if not product_data:
-                    break
+                # one-off products carry their own per 100g values, the rest are looked up
+                if 'per_100g' in product:
+                    product_data = product['per_100g']
+                else:
+                    product_data = self._get_item_by_name(name)
+                    if not product_data:
+                        break
+                    product_data = vars(product_data)
 
                 product['quantity'] = round(float(quantity), 2)
-                product['calories'] = round(float(product_data.calories * float(quantity) / 100), 2)
-                product['protein'] = round(float(product_data.protein * float(quantity) / 100), 2)
-                product['fats'] = round(float(product_data.fats * float(quantity) / 100), 2)
-                product['carbs'] = round(float(product_data.carbs * float(quantity) / 100), 2)
+                product['calories'] = round(float(product_data['calories'] * float(quantity) / 100), 2)
+                product['protein'] = round(float(product_data['protein'] * float(quantity) / 100), 2)
+                product['fats'] = round(float(product_data['fats'] * float(quantity) / 100), 2)
+                product['carbs'] = round(float(product_data['carbs'] * float(quantity) / 100), 2)
                 retVal = True
 
         self._recalculate_daily_macros()

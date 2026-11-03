@@ -55,6 +55,64 @@
       })
   </script>
 
+  <!-- one-off product modal: added only to today's list, not to the products list -->
+  <div class="modal fade" id="customModal" tabindex="-1" role="dialog" aria-labelledby="customModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="customModalLabel">Adauga produs</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <form id="customForm" action="{{url_for("add_custom_product_daily")}}" method="POST">
+            <div class="form-group">
+              <label for="custom-product-name">Nume produs</label>
+              <input type="text" class="form-control" name="product-name" id="custom-product-name" placeholder="ex. Iaurt grecesc" required>
+            </div>
+            <div class="form-group">
+              <label for="custom-product-calories">Calorii (100 g/ml)</label>
+              <input type="text" inputmode="decimal" class="form-control" name="product-calories" id="custom-product-calories" placeholder="0">
+            </div>
+            <div class="form-row">
+              <div class="form-group col-4">
+                <label for="custom-product-protein"><span class="dot dot-protein"></span>Proteine</label>
+                <input type="text" inputmode="decimal" class="form-control" name="product-protein" id="custom-product-protein" placeholder="0">
+              </div>
+              <div class="form-group col-4">
+                <label for="custom-product-fats"><span class="dot dot-fats"></span>Lipide</label>
+                <input type="text" inputmode="decimal" class="form-control" name="product-fats" id="custom-product-fats" placeholder="0">
+              </div>
+              <div class="form-group col-4">
+                <label for="custom-product-carbs"><span class="dot dot-carbs"></span>Carbo</label>
+                <input type="text" inputmode="decimal" class="form-control" name="product-carbs" id="custom-product-carbs" placeholder="0">
+              </div>
+            </div>
+            <div class="form-group mb-0">
+              <label for="custom-product-quantity">Cantitate</label>
+              <div class="input-unit">
+                <input type="text" inputmode="decimal" class="form-control form-control-lg" name="product-quantity" id="custom-product-quantity" required>
+                <span class="input-unit-suffix">g / ml</span>
+              </div>
+              <input type="hidden" name="user" value="{{user}}">
+            </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+          <button type="submit" form="customForm" class="btn btn-primary">Adauga</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $('#customModal').on('shown.bs.modal', function () {
+        $('#custom-product-name').trigger('focus')
+      })
+  </script>
+
   <!-- reset day modal -->
   <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -125,6 +183,9 @@
   <section class="panel">
     <div class="panel-header">
       <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-plus" aria-hidden="true"></i></span>Adauga produs</h2>
+      <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#customModal">
+        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Adauga produs
+      </button>
     </div>
     <div class="panel-body">
       <form id="productForm" action="{{url_for("add_product_daily")}}" method="post">
