@@ -77,6 +77,7 @@
             </button>
             </div>
             <div class="modal-body">
+                <p class="text-muted small d-none" id="scan-info"></p>
                 <form id="addForm" action="{{url_for("add_product")}}" method="POST">
                     <div class="form-group">
                         <label for="new-product-name">Nume produs</label>
@@ -116,13 +117,95 @@
         })
     </script>
 
+    <script type="text/javascript">
+        const scanButton = document.getElementById('scan-button');
+        const scanInput = document.getElementById('scan-input');
+        const scanInfo = document.getElementById('scan-info');
+        let scanPrefilled = false;
+
+        function showScanError(message) {
+            const alert = $('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                '<i class="fa fa-exclamation-circle alert-icon" aria-hidden="true"></i><span></span>' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+            alert.find('span').first().text(message);
+            $('#scan-alerts').empty().append(alert);
+        }
+
+        function setScanBusy(busy) {
+            scanButton.disabled = busy;
+            scanButton.querySelector('i').className = busy ? 'fa fa-spinner fa-spin' : 'fa fa-camera';
+            scanButton.querySelector('span').textContent = busy ? 'Se citeste...' : 'Poza';
+        }
+
+        scanButton.addEventListener('click', function () {
+            scanInput.click();
+        });
+
+        scanInput.addEventListener('change', function () {
+            const photo = scanInput.files[0];
+            if (!photo) return;
+
+            const data = new FormData();
+            data.append('photo', photo);
+            // clear the input so the same photo is not kept around and a new one can be taken
+            scanInput.value = '';
+
+            $('#scan-alerts').empty();
+            setScanBusy(true);
+
+            fetch('{{ url_for("scan_product") }}', { method: 'POST', body: data })
+                .then(function (response) {
+                    if (response.status === 413) return { error: 'The photo is too large' };
+                    return response.json();
+                })
+                .then(function (result) {
+                    if (result.error) {
+                        showScanError(result.error);
+                        return;
+                    }
+
+                    // missing values stay empty, so they have to be filled in by hand
+                    const product = result.product;
+                    ['name', 'calories', 'protein', 'fats', 'carbs'].forEach(function (key) {
+                        document.getElementById('new-product-' + key).value = product[key] === null ? '' : product[key];
+                    });
+                    scanInfo.textContent = 'Cod de bare ' + result.barcode + ' - verifica valorile inainte de a adauga produsul.';
+                    scanInfo.classList.remove('d-none');
+                    scanPrefilled = true;
+                    $('#addModal').modal('show');
+                })
+                .catch(function () {
+                    showScanError('Error encountered while sending the photo');
+                })
+                .finally(function () {
+                    setScanBusy(false);
+                });
+        });
+
+        // a scanned product should not linger in the form when it is opened normally afterwards
+        $('#addModal').on('hidden.bs.modal', function () {
+            if (!scanPrefilled) return;
+            document.getElementById('addForm').reset();
+            scanInfo.classList.add('d-none');
+            scanPrefilled = false;
+        });
+    </script>
+
     {% include '_alerts.html' %}
+    <div id="scan-alerts"></div>
 
     <div class="toolbar">
         <div class="toolbar-info"><strong id="product-count">{{ products|length }}</strong> produse &middot; valori la 100 g / ml</div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-            <i class="fa fa-plus" aria-hidden="true"></i>Adauga produs
-        </button>
+        <div class="toolbar-actions">
+            <button type="button" class="btn btn-secondary" id="scan-button">
+                <i class="fa fa-camera" aria-hidden="true"></i><span>Poza</span>
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+                <i class="fa fa-plus" aria-hidden="true"></i>Adauga produs
+            </button>
+        </div>
+        <!-- opens the phone camera directly; the photo is only sent to read its barcode -->
+        <input type="file" accept="image/*" capture="environment" id="scan-input" class="d-none">
     </div>
 
     <div class="search-box">

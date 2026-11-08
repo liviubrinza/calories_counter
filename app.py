@@ -1,11 +1,14 @@
 from flask_bootstrap import Bootstrap4
-from flask import Flask, render_template, redirect, url_for, request, abort
+from flask import Flask, render_template, redirect, url_for, request, abort, jsonify
+from BarcodeLookup import BarcodeLookup
 from ProductsHandler import ProductsHandler
 from DailyTracker import DailyTracker
 from DishesHandler import DishesHandler
 from Product import Product
 
 app = Flask(__name__)
+# phone photos can be large, anything above this is rejected before reaching a route
+app.config['MAX_CONTENT_LENGTH'] = 25 * 1024 * 1024
 
 bootstrap = Bootstrap4(app)
 
@@ -70,6 +73,31 @@ def add_product():
         error_message = "Error encountered while adding product: " + args['product-name']
 
     return redirect(url_for('get_products_list', success_message=success_message, error_message=error_message))
+
+@app.route('/scan_product', methods=['POST'])
+def scan_product():
+    photo = request.files.get('photo')
+    if photo is None:
+        return jsonify(error="No photo received"), 400
+
+    # the photo is only kept in memory and dropped once the barcode is read
+    try:
+        barcode = BarcodeLookup.decode_barcode(photo.stream)
+    except Exception:
+        return jsonify(error="The photo could not be read"), 400
+
+    if barcode is None:
+        return jsonify(error="No barcode found in the photo"), 404
+
+    try:
+        product = BarcodeLookup.lookup_product(barcode)
+    except Exception:
+        return jsonify(error="Error encountered while looking up barcode: " + barcode), 502
+
+    if product is None:
+        return jsonify(error="No product found in Open Food Facts for barcode: " + barcode), 404
+
+    return jsonify(barcode=barcode, product=product)
 
 @app.route('/remove_product', methods=['GET', 'DELETE'])
 def remove_product():

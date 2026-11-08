@@ -1253,6 +1253,11 @@ label,
 .toolbar-info strong {
   color: var(--text);
 }
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
 /* filter input with a leading search icon */
 .search-box {
