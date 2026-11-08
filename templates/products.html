@@ -77,6 +77,7 @@
             </button>
             </div>
             <div class="modal-body">
+                <p class="text-muted small d-none" id="scan-info"></p>
                 <form id="addForm" action="{{url_for("add_product")}}" method="POST">
                     <div class="form-group">
                         <label for="new-product-name">Nume produs</label>
@@ -117,12 +118,20 @@
     </script>
 
     {% include '_alerts.html' %}
+    <div id="scan-alerts"></div>
 
     <div class="toolbar">
         <div class="toolbar-info"><strong id="product-count">{{ products|length }}</strong> produse &middot; valori la 100 g / ml</div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
-            <i class="fa fa-plus" aria-hidden="true"></i>Adauga produs
-        </button>
+        <div class="toolbar-actions">
+            <button type="button" class="btn btn-secondary"
+                    data-barcode-scan="{{ url_for('scan_product') }}" data-modal="#addModal" data-form="#addForm"
+                    data-field-prefix="new-product-" data-alerts="#scan-alerts" data-info="#scan-info">
+                <i class="fa fa-camera" aria-hidden="true"></i><span>Poza</span>
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+                <i class="fa fa-plus" aria-hidden="true"></i>Adauga produs
+            </button>
+        </div>
     </div>
 
     <div class="search-box">

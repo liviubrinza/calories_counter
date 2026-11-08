@@ -66,6 +66,7 @@
           </button>
         </div>
         <div class="modal-body">
+        <p class="text-muted small d-none" id="custom-scan-info"></p>
         <form id="customForm" action="{{url_for("add_custom_product_daily")}}" method="POST">
             <div class="form-group">
               <label for="custom-product-name">Nume produs</label>
@@ -183,11 +184,20 @@
   <section class="panel">
     <div class="panel-header">
       <h2 class="panel-title"><span class="panel-title-icon"><i class="fa fa-plus" aria-hidden="true"></i></span>Adauga produs</h2>
-      <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#customModal">
-        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Adauga produs
-      </button>
+      <div class="toolbar-actions">
+        <button type="button" class="btn btn-sm btn-outline-primary"
+                data-barcode-scan="{{ url_for('scan_product') }}" data-modal="#customModal" data-form="#customForm"
+                data-field-prefix="custom-product-" data-alerts="#scan-alerts" data-info="#custom-scan-info"
+                data-focus="#custom-product-quantity">
+          <i class="fa fa-camera" aria-hidden="true"></i><span>Poza</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#customModal">
+          <i class="fa fa-pencil-square-o" aria-hidden="true"></i>Adauga produs
+        </button>
+      </div>
     </div>
     <div class="panel-body">
+      <div id="scan-alerts"></div>
       <form id="productForm" action="{{url_for("add_product_daily")}}" method="post">
         <div class="add-row">
           <div class="add-row-picker">
