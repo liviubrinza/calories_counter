@@ -15,6 +15,7 @@ Avocado,174.3,2.0,14.7,8.5
 Bacon,250.0,16.0,20.0,1.5
 Banane,64.2,1.3,0.6,13.4
 Bere,56.0,0.6,4.0,4.4
+Bio Fruit Joghurt Milbona,91.0,3.7,2.8,12.1
 Biscuiti,414.3,8.2,9.5,74.0
 Boabe de bob cu naut Darinne,93.0,6.0,0.8,13.0
 Branza de burduf,366.0,28.0,28.0,0.5
@@ -118,6 +119,7 @@ Harissa Le Phare Du Cap Bon,78.0,2.9,1.8,11.0
 High Protein Cheese Spread Milbona,139.0,10.4,9.0,3.6
 High protein pudding Milbona,76.0,10.0,1.5,5.2
 Hummus,299.0,6.2,25.9,8.2
+Humus cu Ardei si Masline Chef Select,181.0,4.9,12.4,10.0
 Iaurt Danone Yopro,56.0,9.3,0.1,3.6
 Iaurt gras,53.6,3.2,3.2,3.0
 Iaurt grecesc Olympus 10%,126.0,5.5,10.0,3.5
@@ -129,6 +131,7 @@ Isostar cereals and chocolate,414.0,6.2,12.0,70.0
 Kefir Covalact de tara,56.9,3.2,3.3,3.6
 Kiwi,67.3,1.0,0.5,14.7
 Lamaie,34.7,0.9,0.7,6.2
+Lapte 1.5% Pilos,44.0,3.0,1.5,4.5
 Lapte cocos Shan Shi,219.0,1.9,22.0,3.8
 Lapte de cocos,169.0,1.5,17.0,2.5
 Lapte de ovaz,55.0,1.0,1.4,9.3
@@ -158,6 +161,7 @@ Miere de albine,326.8,0.4,0.0,81.3
 Migdale,608.0,28.0,52.0,7.0
 Morcov,43.9,1.5,0.3,8.8
 Morcovi baby,15.8,0.7,0.2,2.8
+Mozarella Light Milbona,165.0,20.5,8.5,1.5
 Mozzarella,264.0,20.0,20.0,1.0
 Muschi de vita,116.0,19.0,4.0,1.0
 Mustar masa La Minut,81.0,4.8,4.4,3.7
@@ -220,6 +224,7 @@ Quinoa,270.2,3.3,5.0,53.0
 Radacina pastarnac,68.5,1.0,0.5,15.0
 Ridichi,21.9,1.9,0.3,2.9
 Rosii,18.0,0.9,0.2,3.9
+Rosii tocate taranesti Camara Noastra,36.0,1.5,0.2,6.5
 Salata romana,16.0,1.0,0.0,3.0
 Salata tabouleh,121.0,1.5,3.2,1.4
 Salau de nil,81.2,19.4,0.4,0.0
@@ -243,6 +248,7 @@ Smantana gatit LaDorna 15%,163.0,3.0,15.0,3.9
 Smochine,260.9,4.3,1.3,58.0
 Somon,170.8,20.0,10.0,0.2
 Somon afumat,202.4,20.0,13.6,0.0
+Sos de maioneza Light Hellmanns,289.0,0.5,27.0,9.1
 Spanac,24.7,3.5,0.3,2.0
 Sparanghel,25.3,2.2,0.1,3.9
 Stafide,299.3,2.5,0.5,71.2
@@ -254,14 +260,15 @@ Sweet Potato Fries Harul Basket,148.0,2.1,4.6,23.1
 Telemea de oaie,252.0,17.0,20.0,1.0
 Telemea de vaca,226.8,17.0,17.2,1.0
 Telemea light vaca Hochland,219.0,20.0,15.0,1.0
+Telemea rasa oaie Camara Noastra,344.0,20.0,28.0,3.1
 Telina,29.0,1.0,0.0,5.0
 Telina (apio),21.0,1.0,0.6,3.0
-Test,15.0,2.0,0.0,1.5
 Tofu,102.0,10.0,6.0,2.0
 Tofu afumat Inedit,132.0,13.0,8.0,1.2
 Tofu plain Vemondo,125.0,12.0,7.5,2.3
 Ton,89.0,19.0,1.0,1.0
 Ton Puerto del Gusto suc propriu,96.5,23.0,0.5,0.0
+Ulei Avocado Deluxe,828.0,0.0,92.0,0.0
 Ulei de cocos extravirgin,891.0,0.0,99.0,0.0
 Ulei de floarea soarelui,900.0,0.0,100.0,0.0
 Ulei de masline,891.0,0.0,99.0,0.0
@@ -277,11 +284,13 @@ Varza de bruxelles,25.1,3.4,0.3,2.2
 Varza rosie,31.8,1.9,0.2,5.6
 Vin Mediu,30.9,0.0,0.1,7.5
 Visine,63.7,1.2,0.5,13.6
+Wheat Corn Tortilla Wrap El Tequito,290.0,7.9,1.1,50.0
 Whey cheese Eridanous,239.0,13.2,20.1,1.3
+Worcester Sauce Heinz,97.0,0.7,0.7,22.0
 Xylitol,240.0,0.0,0.0,100.0
 Zahar,399.6,0.0,0.0,99.9
 Zmeura,65.4,1.4,0.6,13.6
 Zucchini,17.72,1.21,0.32,2.5
-Ulei Avocado Deluxe,828.0,0.0,92.0,0.0
-Rosii tocate taranesti Camara Noastra,36.0,1.5,0.2,6.5
-Worcester Sauce Heinz,97.0,0.7,0.7,22.0
+guacamole usor picant,183.0,1.6,18.3,8.6
+High protein 30% Toffee crunchy bar Isostar,412.73,30.0,13.0,44.0
+Cottage cheese light 2% Olympus,40.0,11.0,2.0,2.5
