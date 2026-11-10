@@ -28,7 +28,8 @@ class DishesHandler:
         return None
 
     def add_new_dish(self, name, ingredients):
-        # ingredients: list of (product_name, quantity) pairs
+        # ingredients: list of (product_name, quantity) pairs, or (product_name, quantity, per_100g)
+        # for ad hoc ingredients that are not in the products list
         # returns None on success, an error message otherwise
         error = self._check_name(name)
         if error:
@@ -78,9 +79,22 @@ class DishesHandler:
 
         # same product added more than once is merged into a single ingredient
         quantities = {}
-        for product_name, quantity in ingredients:
-            if not self.productsHandler.get_product_by_name(product_name) and product_name not in previous:
-                return None, "Product not found: " + product_name
+        # per 100g values of ad hoc ingredients (e.g. scanned products), which are not in the products list
+        custom = {}
+        for ingredient in ingredients:
+            product_name, quantity = ingredient[0], ingredient[1]
+            values = ingredient[2] if len(ingredient) > 2 else None
+            if not self.productsHandler.get_product_by_name(product_name):
+                if values is not None:
+                    try:
+                        values = {key: float(values[key]) for key in ('calories', 'protein', 'fats', 'carbs')}
+                    except (KeyError, TypeError, ValueError):
+                        return None, "Invalid values for: " + product_name
+                    if any(not math.isfinite(value) or value < 0 for value in values.values()):
+                        return None, "Invalid values for: " + product_name
+                    custom[product_name] = values
+                elif product_name not in previous:
+                    return None, "Product not found: " + product_name
             try:
                 quantity = float(quantity)
             except (TypeError, ValueError):
@@ -98,6 +112,8 @@ class DishesHandler:
             if product:
                 per_100g = {'calories': product.calories, 'protein': product.protein,
                             'fats': product.fats, 'carbs': product.carbs}
+            elif product_name in custom:
+                per_100g = custom[product_name]
             else:
                 # derive per 100g values from the previously saved ingredient
                 old = previous[product_name]

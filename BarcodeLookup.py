@@ -9,7 +9,7 @@ class BarcodeLookup:
     api_url = "https://world.openfoodfacts.org/api/v2/product/{barcode}.json?fields=product_name,product_name_ro,generic_name,nutriments"
     # Open Food Facts asks every client to identify itself
     user_agent = "calories_counter/1.0 (personal calorie tracker)"
-    barcode_formats = zxingcpp.BarcodeFormat.EAN13 | zxingcpp.BarcodeFormat.EAN8 | zxingcpp.BarcodeFormat.UPCA | zxingcpp.BarcodeFormat.UPCE
+    barcode_formats = (zxingcpp.BarcodeFormat.EAN13, zxingcpp.BarcodeFormat.EAN8, zxingcpp.BarcodeFormat.UPCA, zxingcpp.BarcodeFormat.UPCE)
     # phone photos are huge; this is plenty for a barcode and keeps decoding fast
     max_image_side = 2000
 

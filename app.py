@@ -313,11 +313,27 @@ def get_dishes_list():
                            success_message=success_message,
                            error_message=error_message)
 
+def get_dish_ingredients(args):
+    # (name, quantity) pairs for products from the list, (name, quantity, per_100g) for ad hoc
+    # ingredients (scanned products), which send their per 100g values in custom-* fields
+    custom = {}
+    for index, name in enumerate(args.getlist('custom-name')):
+        custom[name] = {key: (args.getlist('custom-' + key)[index:index + 1] or [None])[0]
+                        for key in ('calories', 'protein', 'fats', 'carbs')}
+
+    ingredients = []
+    for name, quantity in zip(args.getlist('ingredient-name'), args.getlist('ingredient-quantity')):
+        if name in custom:
+            ingredients.append((name, quantity, custom[name]))
+        else:
+            ingredients.append((name, quantity))
+    return ingredients
+
 @app.route('/add_dish', methods=['POST'])
 def add_dish():
     args = request.form
     name = args.get('dish-name', '').strip()
-    ingredients = list(zip(args.getlist('ingredient-name'), args.getlist('ingredient-quantity')))
+    ingredients = get_dish_ingredients(args)
 
     error = dishesHandler.add_new_dish(name=name, ingredients=ingredients)
     success_message = None
@@ -335,7 +351,7 @@ def update_dish():
     args = request.form
     original_name = args.get('original-name', '')
     name = args.get('dish-name', '').strip()
-    ingredients = list(zip(args.getlist('ingredient-name'), args.getlist('ingredient-quantity')))
+    ingredients = get_dish_ingredients(args)
 
     error = dishesHandler.update_dish(original_name=original_name, name=name, ingredients=ingredients)
     success_message = None

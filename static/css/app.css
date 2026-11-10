@@ -487,10 +487,17 @@ label,
   grid-column: 1 / -1;
   min-width: 0;
 }
+/* add row with an extra scan (Poza) button after the add button */
+.add-row-scan {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
 @media (min-width: 768px) {
   .add-row {
     grid-template-columns: minmax(0, 1fr) 190px auto;
     gap: 12px;
+  }
+  .add-row-scan {
+    grid-template-columns: minmax(0, 1fr) 190px auto auto;
   }
   .add-row-picker {
     grid-column: auto;

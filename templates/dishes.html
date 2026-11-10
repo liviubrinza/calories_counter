@@ -23,8 +23,9 @@
         <input type="text" class="form-control form-control-lg" name="dish-name" id="dish-name" placeholder="ex. Omleta cu legume" required>
       </div>
 
+      <div id="scan-alerts"></div>
       <label for="ingredient-select" class="field-label">Ingrediente</label>
-      <div class="add-row">
+      <div class="add-row add-row-scan">
         <div class="add-row-picker">
           <div class="product-search" data-none-results-text="Niciun rezultat pentru {0}">
             <input type="text" class="form-control form-control-lg product-search-input" id="ingredient-select" placeholder="Cauta produs" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="ingredient-menu" aria-expanded="false">
@@ -41,6 +42,12 @@
         </div>
         <button type="button" class="btn btn-secondary btn-lg" onclick="addIngredient()">
           <i class="fa fa-plus" aria-hidden="true"></i><span class="d-none d-sm-inline">Adauga ingredient</span><span class="d-sm-none">Adauga</span>
+        </button>
+        <button type="button" class="btn btn-secondary btn-lg"
+                data-barcode-scan="{{ url_for('scan_product') }}" data-modal="#scanModal" data-form="#scanForm"
+                data-field-prefix="scan-product-" data-alerts="#scan-alerts" data-info="#scan-info"
+                data-focus="#scan-product-quantity">
+          <i class="fa fa-camera" aria-hidden="true"></i><span>Poza</span>
         </button>
       </div>
 
@@ -116,6 +123,58 @@
       </button>
     </div>
   </section>
+
+  <!-- scanned product modal: added only as an ingredient of this dish, not to the products list -->
+  <div class="modal fade" id="scanModal" tabindex="-1" role="dialog" aria-labelledby="scanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="scanModalLabel">Adauga ingredient</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+        <p class="text-muted small d-none" id="scan-info"></p>
+        <form id="scanForm">
+            <div class="form-group">
+              <label for="scan-product-name">Nume produs</label>
+              <input type="text" class="form-control" id="scan-product-name" required>
+            </div>
+            <div class="form-group">
+              <label for="scan-product-calories">Calorii (100 g/ml)</label>
+              <input type="text" inputmode="decimal" class="form-control" id="scan-product-calories" placeholder="0">
+            </div>
+            <div class="form-row">
+              <div class="form-group col-4">
+                <label for="scan-product-protein"><span class="dot dot-protein"></span>Proteine</label>
+                <input type="text" inputmode="decimal" class="form-control" id="scan-product-protein" placeholder="0">
+              </div>
+              <div class="form-group col-4">
+                <label for="scan-product-fats"><span class="dot dot-fats"></span>Lipide</label>
+                <input type="text" inputmode="decimal" class="form-control" id="scan-product-fats" placeholder="0">
+              </div>
+              <div class="form-group col-4">
+                <label for="scan-product-carbs"><span class="dot dot-carbs"></span>Carbo</label>
+                <input type="text" inputmode="decimal" class="form-control" id="scan-product-carbs" placeholder="0">
+              </div>
+            </div>
+            <div class="form-group mb-0">
+              <label for="scan-product-quantity">Cantitate</label>
+              <div class="input-unit">
+                <input type="text" inputmode="decimal" class="form-control form-control-lg" id="scan-product-quantity" required>
+                <span class="input-unit-suffix">g / ml</span>
+              </div>
+            </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
+          <button type="submit" form="scanForm" class="btn btn-primary">Adauga</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- saved dishes -->
   <section class="panel">
@@ -204,7 +263,11 @@
 <script type="text/javascript">
   // per 100g values of all products, keyed by product name
   var productsData = {{ products_data|tojson }};
+  // the products list itself, which a scanned product must not shadow
+  var productsList = {{ products_data|tojson }};
   var ingredients = [];
+  // per 100g values of ad hoc ingredients (scanned products), sent with the dish since they are not in the products list
+  var customProducts = {};
   // saved dishes, in the same order as the saved dishes table, so they can be loaded back into the builder
   var savedDishes = [{% for dish in dishes %}{name: {{ dish.name|tojson }}, ingredients: {{ dish.ingredients|tojson }}}{% if not loop.last %}, {% endif %}{% endfor %}];
 
@@ -225,6 +288,11 @@
       return;
     }
 
+    pushIngredient(name, quantity);
+    $('#ingredient-quantity').val('').focus();
+  }
+
+  function pushIngredient(name, quantity) {
     var existing = ingredients.find(function (ingredient) { return ingredient.name === name; });
     if (existing) {
       existing.quantity = round2(existing.quantity + quantity);
@@ -232,9 +300,50 @@
       ingredients.push({name: name, quantity: quantity});
     }
 
-    $('#ingredient-quantity').val('').focus();
     renderIngredients();
   }
+
+  // decimal comma accepted as well, empty means 0; NaN for anything that is not a valid number
+  function parseValue(text) {
+    text = text.trim().replace(',', '.');
+    return text === '' ? 0 : Number(text);
+  }
+
+  // scanned product, reviewed in the modal, added as an ingredient of this dish only
+  $('#scanForm').on('submit', function (event) {
+    event.preventDefault();
+
+    var name = $('#scan-product-name').val().trim();
+    var values = {};
+    var valid = true;
+    ['calories', 'protein', 'fats', 'carbs'].forEach(function (key) {
+      values[key] = parseValue($('#scan-product-' + key).val());
+      if (!(values[key] >= 0)) valid = false;
+    });
+    var quantity = parseValue($('#scan-product-quantity').val());
+
+    if (!name) {
+      alert('Introdu numele produsului');
+      return;
+    }
+    if (productsList.hasOwnProperty(name)) {
+      alert('Exista deja un produs cu numele "' + name + '". Alege-l din lista sau schimba numele.');
+      return;
+    }
+    if (!valid) {
+      alert('Introdu valori valide');
+      return;
+    }
+    if (!(quantity > 0)) {
+      alert('Introdu o cantitate valida');
+      return;
+    }
+
+    customProducts[name] = values;
+    productsData[name] = values;
+    pushIngredient(name, round2(quantity));
+    $('#scanModal').modal('hide');
+  });
 
   function removeIngredient(index) {
     ingredients.splice(index, 1);
@@ -299,6 +408,12 @@
 
       addHiddenInput(operations, 'ingredient-name', ingredient.name);
       addHiddenInput(operations, 'ingredient-quantity', ingredient.quantity);
+      if (customProducts[ingredient.name]) {
+        addHiddenInput(operations, 'custom-name', ingredient.name);
+        ['calories', 'protein', 'fats', 'carbs'].forEach(function (key) {
+          addHiddenInput(operations, 'custom-' + key, customProducts[ingredient.name][key]);
+        });
+      }
 
       body.appendChild(row);
     });
@@ -372,6 +487,7 @@
 
   function editDish(index) {
     var dish = savedDishes[index];
+    customProducts = {};
 
     ingredients = dish.ingredients.map(function (ingredient) {
       // a product removed since the dish was saved keeps the values it was saved with
@@ -400,6 +516,7 @@
 
   function cancelEdit() {
     ingredients = [];
+    customProducts = {};
     $('#dishForm').attr('action', '{{ url_for("add_dish") }}');
     $('#original-name').val('');
     $('#dish-name').val('');
